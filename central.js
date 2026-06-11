@@ -26,8 +26,7 @@
     const categoriesTrack = document.getElementById('categoriesTrack');
     const popularTrack = document.getElementById('popularTrack');
 
-    // Функция отрисовки карточек (без надписей)
-    function renderCards(container, dataArray) {
+    function renderCards(container, dataArray, targetUrl = 'start.html') {
         if (!container) return;
         container.innerHTML = '';
         dataArray.forEach(item => {
@@ -35,7 +34,7 @@
             card.className = 'category-card';
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
-                window.location.href = 'start.html';
+                window.location.href = targetUrl;
             });
 
             const img = document.createElement('img');
@@ -227,6 +226,6 @@
     // --------------------------------------------------------------
     // 10. ЗАПУСК ОТРИСОВКИ КАРТОЧЕК
     // --------------------------------------------------------------
-    renderCards(categoriesFlex, categoriesData);
-    renderCards(popularFlex, popularData);
+    renderCards(categoriesFlex, categoriesData, 'start.html');
+    renderCards(popularFlex, popularData, 'series.html');
 })();
