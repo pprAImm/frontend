@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приветствие</title>
+    <link rel="stylesheet" href="start.css">
+    <script src="registration.js" defer></script>
+</head>
+<body>
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            
+            <h2>PRAIM</h2>
+            <button id="registerButton">ENTER</button>
+        </div>
+    </div>
+
+    <script>
+        // Получаем элементы
+        const welcomeModal = document.getElementById('welcomeModal');
+        const registerButton = document.getElementById('registerButton');
+
+        // Открываем модальное окно при загрузке страницы
+        window.onload = function() {
+            welcomeModal.style.display = 'block';
+        };
+
+        // Переход на страницу регистрации
+        registerButton.onclick = function() {
+            window.location.href = 'registration.html'; // Замените на имя вашей страницы регистрации
+        };
+
+    </script>
+</body>
+</html>

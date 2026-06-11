@@ -1,0 +1,306 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+}
+
+body {
+    background-image: url('assets/images/background1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: rgb(240, 203, 203);
+    overflow-x: hidden;
+    animation: fadeInCentral 0.4s ease-out;
+}
+
+@keyframes fadeInCentral {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 32px 64px 32px;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 0 24px 0;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(240, 203, 203, 0.15);
+    margin-bottom: 32px;
+}
+
+.user-greeting {
+    background: rgba(18, 3, 3, 0.7);
+    backdrop-filter: blur(4px);
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    border: 1px solid rgba(240, 203, 203, 0.15);
+}
+
+.user-greeting::before {
+    content: "👤";
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.search-wrapper {
+    flex: 1;
+    min-width: 240px;
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(18, 3, 3, 0.7);
+    border: 1px solid rgba(240, 203, 203, 0.2);
+    border-radius: 56px;
+    padding: 14px 24px;
+    font-size: 1rem;
+    color: rgb(240, 203, 203);
+    transition: all 0.2s ease;
+    outline: none;
+    font-weight: 400;
+    backdrop-filter: blur(4px);
+}
+
+.search-input::placeholder {
+    color: rgba(240, 203, 203, 0.5);
+    font-weight: 400;
+    letter-spacing: -0.2px;
+}
+
+.search-input:focus {
+    border-color: #936363;
+    background: rgba(10, 2, 2, 0.9);
+    box-shadow: 0 0 0 3px rgba(147, 99, 99, 0.3);
+}
+
+.logo-icon {
+    background: rgba(18, 3, 3, 0.7);
+    border-radius: 28px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    border: 1px solid rgba(240, 203, 203, 0.15);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+}
+
+.logo-icon img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+}
+
+.logo-text {
+    background: linear-gradient(135deg, rgb(240, 203, 203), #936363);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero-banner {
+    width: 100%;
+    margin-bottom: 48px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 35px -12px rgba(91, 17, 17, 0.5);
+}
+
+.hero-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.categories-section {
+    margin-top: 8px;
+    margin-bottom: 48px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    background: linear-gradient(120deg, rgb(240, 203, 203), #936363);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.scroll-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.scroll-btn {
+    background: rgba(18, 3, 3, 0.7);
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: rgb(240, 203, 203);
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 0;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(240, 203, 203, 0.1);
+}
+
+.scroll-btn:hover {
+    background: rgba(147, 99, 99, 0.3);
+    transform: scale(1.02);
+    border-color: rgba(147, 99, 99, 0.5);
+}
+
+.scroll-btn:active {
+    transform: scale(0.96);
+}
+
+.categories-track {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #936363 rgba(18, 3, 3, 0.5);
+    border-radius: 28px;
+}
+
+.categories-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.categories-track::-webkit-scrollbar-track {
+    background: rgba(18, 3, 3, 0.5);
+    border-radius: 12px;
+}
+
+.categories-track::-webkit-scrollbar-thumb {
+    background: #936363;
+    border-radius: 12px;
+}
+
+.categories-flex {
+    display: flex;
+    gap: 22px;
+    padding: 6px 4px 20px 4px;
+}
+
+.category-card {
+    flex: 0 0 auto;
+    width: 180px;
+    transition: all 0.25s ease;
+    border-radius: 24px;
+    cursor: pointer;
+    background: rgba(18, 3, 3, 0.7);
+    overflow: hidden;
+    border: 1px solid rgba(240, 203, 203, 0.08);
+    backdrop-filter: blur(2px);
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(147, 99, 99, 0.5);
+    box-shadow: 0 20px 25px -15px rgba(91, 17, 17, 0.6);
+}
+
+.category-img {
+    width: 100%;
+    aspect-ratio: 2 / 1.2;
+    background: rgba(30, 5, 5, 0.8);
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.category-card:hover .category-img {
+    transform: scale(1.02);
+}
+
+@media (max-width: 780px) {
+    .app-container {
+        padding: 0 20px 48px 20px;
+    }
+    .top-bar {
+        gap: 16px;
+    }
+    .user-greeting {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+    }
+    .logo-icon {
+        padding: 6px 14px;
+    }
+    .logo-icon img {
+        width: 26px;
+        height: 26px;
+    }
+    .section-header h2 {
+        font-size: 1.4rem;
+    }
+    .category-card {
+        width: 150px;
+    }
+    .scroll-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .top-bar {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .search-wrapper {
+        order: 3;
+        width: 100%;
+        margin-top: 8px;
+    }
+    .category-card {
+        width: 130px;
+    }
+    .categories-flex {
+        gap: 14px;
+    }
+}
