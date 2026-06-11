@@ -41,4 +41,4 @@ frontend/
  
 ## Запуск локально 
  
-Установите расширение **Live Server** в VS Code, откройте `login.html` и нажмите "Open with live".
+Установите расширение **Live Server** в VS Code, откройте `login.html` и нажмите "Open with live server".
