@@ -49,4 +49,4 @@
     if (logo) {
         logo.style.cursor = 'default';
     }
-})();
+})(); 

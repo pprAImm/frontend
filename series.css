@@ -14,7 +14,7 @@ body {
     color: rgb(240, 203, 203);
     overflow-x: hidden;
     animation: fadeInSeries 0.4s ease-out;
-}
+} 
 
 @keyframes fadeInSeries {
     from { opacity: 0; }

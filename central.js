@@ -143,7 +143,7 @@
         logo.style.cursor = 'default';
     }
 
-    // Юзернейм тоже не должен быть интерактивным (по умолчанию)
+    // Юзернейм  тоже не должен быть интерактивным (по умолчанию)
     const userDiv = document.getElementById('userNameDisplay');
     if (userDiv) {
         userDiv.style.cursor = 'default';

@@ -40,7 +40,7 @@ if (registrationForm) {
             }, 150);
         });
     });
-    
+     
     setTimeout(() => {
         const firstInput = document.querySelector('input');
         if (firstInput) {
