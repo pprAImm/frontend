@@ -40,5 +40,5 @@ frontend/
 | `series.html`     | Эпизоды и комментарии → `start.html`          |
 
 ## Запуск локально
-
+ 
 Установите расширение **Live Server** в VS Code, откройте `login.html` и нажмите "Go Live".
