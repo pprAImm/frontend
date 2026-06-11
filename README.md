@@ -39,6 +39,6 @@ frontend/
 | `central.html`    | Категории → `start.html`, Популярное → `series.html` |
 | `series.html`     | Эпизоды и комментарии → `start.html`          |
 
-## Запуск локально
+## Запуск локально 
  
-Установите расширение **Live Server** в VS Code, откройте `login.html` и нажмите "Go Live".
+Установите расширение **Live Server** в VS Code, откройте `login.html` и нажмите "Open with live server".
