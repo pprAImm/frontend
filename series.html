@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Сериал — VideoStream</title>
+    <link rel="stylesheet" href="series.css">
+</head>
+<body>
+
+<div class="app-container">
+    <div class="top-bar">
+        <div class="user-greeting" id="userNameDisplay">
+            6767676767676767
+        </div>
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="globalSearch" placeholder="Поиск фильмов, сериалов, жанров...">
+        </div>
+        <div class="logo-icon">
+            <img src="logo.png" alt="Логотип" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2c3e66/white?text=🎬';">
+            <span class="logo-text">prAIm</span>
+        </div>
+    </div>
+
+    <h1 class="series-title">Name</h1>
+
+    <div class="series-banner">
+        <img src="assets/images/add.png" alt="Превью сериала" onerror="this.onerror=null; this.src='https://placehold.co/1600x600/1f2a48/white?text=Превью';">
+    </div>
+
+    <div class="series-info">
+        <div class="series-rating">
+            <span class="rating-label">Рейтинг:</span>
+            <span class="rating-value">8.4 / 10</span>
+        </div>
+        <p class="series-description">
+            Захватывающий сериал, в центре сюжета которого — история, полная неожиданных поворотов, глубоких эмоций и ярких персонажей. Каждая серия погружает зрителя в уникальную атмосферу, заставляя переживать вместе с героями и искать ответы на вечные вопросы. Не пропустите возможность стать частью этого увлекательного путешествия.
+        </p>
+    </div>
+
+    <div class="episodes-section">
+        <h2 class="section-title">Эпизоды</h2>
+        <div class="episodes-list" id="episodesList">
+            <div class="episode-card" data-episode="1">
+                <span class="episode-number">Серия 1</span>
+                <span class="episode-title">Пилотная серия</span>
+            </div>
+            <div class="episode-card" data-episode="2">
+                <span class="episode-number">Серия 2</span>
+                <span class="episode-title">Новая глава</span>
+            </div>
+            <div class="episode-card" data-episode="3">
+                <span class="episode-number">Серия 3</span>
+                <span class="episode-title">Неожиданный поворот</span>
+            </div>
+            <div class="episode-card" data-episode="4">
+                <span class="episode-number">Серия 4</span>
+                <span class="episode-title">На пути к истине</span>
+            </div>
+            <div class="episode-card" data-episode="5">
+                <span class="episode-number">Серия 5</span>
+                <span class="episode-title">Финал сезона</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="comments-section">
+        <h2 class="section-title">Комментарии</h2>
+        <div class="comments-list" id="commentsList">
+            <p class="comments-empty">Комментариев пока нет. Будьте первым!</p>
+        </div>
+        <button class="add-comment-btn" id="addCommentBtn">Добавить комментарий</button>
+    </div>
+</div> 
+
+<script src="series.js"></script>
+</body>
+</html>
