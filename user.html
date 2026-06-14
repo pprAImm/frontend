@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Личный кабинет — prAIm</title>
+    <link rel="stylesheet" href="central.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="top-bar">
+        <div class="logo-icon">
+            <img src="logo.png" alt="Логотип" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2c3e66/white?text=🎬';">
+            <span class="logo-text">prAIm</span>
+        </div>
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="globalSearch" placeholder="Поиск фильмов, сериалов, жанров...">
+        </div>
+        <div class="user-greeting" id="userNameDisplay">6767676767676767</div>
+    </div>
+
+    <section class="profile-section">
+        <div class="section-header">
+            <h2>Личный кабинет</h2>
+        </div>
+
+        <div class="profile-grid">
+            <section class="profile-card">
+                <h3>Изменить имя</h3>
+                <form id="nameForm">
+                    <label for="profileName">Имя пользователя</label>
+                    <input type="text" id="profileName" name="profileName" placeholder="Введите новое имя">
+                    <button type="submit" class="button">Сохранить</button>
+                </form>
+            </section>
+
+            <section class="profile-card">
+                <h3>Сменить пароль</h3>
+                <form id="passwordForm">
+                    <label for="currentPassword">Текущий пароль</label>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder="Текущий пароль">
+                    <label for="newPassword">Новый пароль</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Новый пароль">
+                    <label for="confirmPassword">Подтверждение пароля</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Подтвердите пароль">
+                    <button type="submit" class="button">Изменить пароль</button>
+                </form>
+            </section>
+        </div>
+
+        <div class="profile-logout-card">
+            <h3>Безопасность</h3>
+            <button id="logoutButton" class="button button-secondary">Выйти из аккаунта</button>
+        </div>
+    </section>
+</div>
+<script src="topbar.js"></script>
+<script src="user.js"></script>
+</body>
+</html>

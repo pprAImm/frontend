@@ -34,7 +34,8 @@
             card.className = 'category-card';
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
-                window.location.href = targetUrl;
+                const url = typeof targetUrl === 'function' ? targetUrl(item) : targetUrl;
+                window.location.href = url;
             });
 
             const img = document.createElement('img');
@@ -226,6 +227,6 @@
     // --------------------------------------------------------------
     // 10. ЗАПУСК ОТРИСОВКИ КАРТОЧЕК
     // --------------------------------------------------------------
-    renderCards(categoriesFlex, categoriesData, 'start.html');
+    renderCards(categoriesFlex, categoriesData, (item) => `category.html?id=${item.id}`);
     renderCards(popularFlex, popularData, 'series.html');
 })();

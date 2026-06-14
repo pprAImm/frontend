@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Описание фильма — prAIm</title>
+    <link rel="stylesheet" href="central.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="top-bar">
+        <div class="logo-icon">
+            <img src="logo.png" alt="Логотип" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2c3e66/white?text=🎬';">
+            <span class="logo-text">prAIm</span>
+        </div>
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="globalSearch" placeholder="Поиск фильмов, сериалов, жанров...">
+        </div>
+        <div class="user-greeting" id="userNameDisplay">6767676767676767</div>
+    </div>
+
+    <section class="movie-detail-page">
+        <div class="movie-detail-card">
+            <img id="movieCover" class="movie-detail-cover" src="" alt="Обложка фильма">
+            <div class="movie-detail-info">
+                <span class="movie-badge" id="movieGenre">Фильм</span>
+                <h1 id="movieTitle">Название фильма</h1>
+                <div class="movie-rating" id="movieRating">Рейтинг: <span>0.0</span></div>
+                <p id="movieDescription">Описание фильма появится здесь. Подробнее о сюжете, актёрах и атмосфере.</p>
+                <div class="movie-action-row">
+                    <a href="central.html" class="button button-secondary">Вернуться на главную</a>
+                    <a id="backLink" href="category.html" class="button">Вернуться в категорию</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="episodes-section">
+        <div class="section-header">
+            <h2>Эпизоды</h2>
+        </div>
+        <div class="episodes-list" id="episodesList"></div>
+    </section>
+</div>
+<script src="topbar.js"></script>
+<script src="movie.js"></script>
+</body>
+</html>
