@@ -1,13 +1,32 @@
 const registrationForm = document.getElementById('registration-form');
 if (registrationForm) {
-    registrationForm.addEventListener('submit', function(event) {
+    registrationForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const username = document.getElementById('username').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        console.log('Регистрация:', { username, email, password });
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                alert(err.error || 'Ошибка регистрации');
+                return;
+            }
+
+            // Успех — переходим на главную
+            navigateWithAnimation('central.html');
+        } catch (e) {
+            console.error(e);
+            alert('Ошибка сети при регистрации');
+        }
     });
 }
 
@@ -69,8 +88,30 @@ if (registrationForm) {
 
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
-    loginForm.addEventListener('submit', function(event) {
+    loginForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-        navigateWithAnimation('central.html');
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                alert(err.error || 'Ошибка входа');
+                return;
+            }
+
+            navigateWithAnimation('central.html');
+        } catch (e) {
+            console.error(e);
+            alert('Ошибка сети при входе');
+        }
     });
 }

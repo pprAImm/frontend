@@ -28,34 +28,26 @@
         <img src= 'assets/images/add.png' alt="Баннер" onerror="this.onerror=null; this.src='https://placehold.co/1600x400/1f2a48/white?text=';">
     </div>
 
-    <!-- СЕКЦИЯ КАТЕГОРИЙ С ГОРИЗОНТАЛЬНОЙ ПРОКРУТКОЙ -->
+    <!-- СЕКЦИЯ КАТЕГОРИЙ -->
     <div class="categories-section">
         <div class="section-header">
             <h2>Категории</h2>
             <div class="scroll-controls">
-                <button class="scroll-btn" id="scrollLeftCategories" aria-label="Прокрутить влево">←</button>
-                <button class="scroll-btn" id="scrollRightCategories" aria-label="Прокрутить вправо">→</button>
+                <button class="scroll-btn" id="catScrollLeft">←</button>
+                <button class="scroll-btn" id="catScrollRight">→</button>
             </div>
         </div>
-
         <div class="categories-track" id="categoriesTrack">
-            <div class="categories-flex" id="categoriesFlex"></div>
+            <div class="categories-flex" id="categoriesContainer"></div>
         </div>
     </div>
 
-    <!-- СЕКЦИЯ ПОПУЛЯРНОЕ С ГОРИЗОНТАЛЬНОЙ ПРОКРУТКОЙ -->
+    <!-- СЕКЦИЯ ПОПУЛЯРНОЕ -->
     <div class="categories-section">
         <div class="section-header">
             <h2>Популярное</h2>
-            <div class="scroll-controls">
-                <button class="scroll-btn" id="scrollLeftPopular" aria-label="Прокрутить влево">←</button>
-                <button class="scroll-btn" id="scrollRightPopular" aria-label="Прокрутить вправо">→</button>
-            </div>
         </div>
-
-        <div class="categories-track" id="popularTrack">
-            <div class="categories-flex" id="popularFlex"></div>
-        </div>
+        <div class="series-grid" id="seriesContainer"></div>
     </div>
 </div>
 
