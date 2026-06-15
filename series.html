@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Сериал — VideoStream</title>
+    <title>Сериал — prAIm</title>
+    <link rel="stylesheet" href="central.css">
     <link rel="stylesheet" href="series.css">
 </head>
 <body>
 
 <div class="app-container">
     <div class="top-bar">
-        <div class="user-greeting" id="userNameDisplay">
-            6767676767676767
+        <div class="logo-icon">
+            <img src="logo.png" alt="Логотип" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2c3e66/white?text=🎬';">
+            <span class="logo-text">prAIm</span>
         </div>
         <div class="search-wrapper">
             <input type="text" class="search-input" id="globalSearch" placeholder="Поиск фильмов, сериалов, жанров...">
         </div>
-        <div class="logo-icon">
-            <img src="logo.png" alt="Логотип" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2c3e66/white?text=🎬';">
-            <span class="logo-text">prAIm</span>
+        <div class="user-greeting" id="userNameDisplay">
+            6767676767676767
         </div>
     </div>
 
@@ -31,10 +32,25 @@
     <div class="series-info">
         <div class="series-rating">
             <span class="rating-label">Рейтинг:</span>
-            <span class="rating-value">8.4 / 10</span>
+            <span class="rating-value" id="ratingValue">—</span>
         </div>
-        <p class="series-description">
-            Захватывающий сериал, в центре сюжета которого — история, полная неожиданных поворотов, глубоких эмоций и ярких персонажей. Каждая серия погружает зрителя в уникальную атмосферу, заставляя переживать вместе с героями и искать ответы на вечные вопросы. Не пропустите возможность стать частью этого увлекательного путешествия.
+        <div class="rate-section">
+            <span class="rate-label">Оценить:</span>
+            <div class="rate-stars" id="rateStars">
+                <button class="star" data-score="1">★</button>
+                <button class="star" data-score="2">★</button>
+                <button class="star" data-score="3">★</button>
+                <button class="star" data-score="4">★</button>
+                <button class="star" data-score="5">★</button>
+                <button class="star" data-score="6">★</button>
+                <button class="star" data-score="7">★</button>
+                <button class="star" data-score="8">★</button>
+                <button class="star" data-score="9">★</button>
+                <button class="star" data-score="10">★</button>
+            </div>
+            <span class="rating-feedback hidden" id="ratingFeedback"></span>
+        </div>
+        <p class="series-description" id="seriesDescription">
         </p>
     </div>
 
@@ -69,10 +85,14 @@
         <div class="comments-list" id="commentsList">
             <p class="comments-empty">Комментариев пока нет. Будьте первым!</p>
         </div>
-        <button class="add-comment-btn" id="addCommentBtn">Добавить комментарий</button>
+        <div class="comment-form" id="commentForm">
+            <textarea class="comment-textarea" id="commentInput" placeholder="Напишите комментарий..." rows="3"></textarea>
+            <button class="add-comment-btn" id="addCommentBtn">Отправить</button>
+        </div>
     </div>
 </div> 
 
+<script src="topbar.js"></script>
 <script src="series.js"></script>
 </body>
 </html>

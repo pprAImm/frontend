@@ -1,4 +1,5 @@
 (function() {
+    const API_BASE = `http://${window.location.hostname}:8081`;
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
@@ -23,11 +24,16 @@
         title.className = 'movie-title';
         title.textContent = movie.title || '';
 
+        const desc = document.createElement('p');
+        desc.className = 'movie-desc';
+        desc.textContent = movie.description || '';
+
         const rating = document.createElement('div');
         rating.className = 'movie-rating';
         rating.innerHTML = `Рейтинг: <span>${movie.average_rating ?? '-'}</span>`;
 
         body.appendChild(title);
+        body.appendChild(desc);
         body.appendChild(rating);
         card.appendChild(img);
         card.appendChild(body);
@@ -37,7 +43,7 @@
 
     if (slug) {
         // Load category and its series from API
-        fetch(`/api/categories/${encodeURIComponent(slug)}`, { credentials: 'include' })
+        fetch(`${API_BASE}/api/categories/${encodeURIComponent(slug)}`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : Promise.reject(r))
             .then(data => {
                 const cat = data.category;
@@ -57,6 +63,7 @@
                 series.forEach(s => moviesGrid.appendChild(renderMovie({
                     id: s.id,
                     title: s.title,
+                    description: s.description,
                     cover_url: s.cover_url,
                     average_rating: s.average_rating,
                 })));

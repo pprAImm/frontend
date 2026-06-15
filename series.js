@@ -1,11 +1,16 @@
 (function() {
+    const API_BASE = `http://${window.location.hostname}:8081`;
     const episodesList = document.getElementById('episodesList');
     const addCommentBtn = document.getElementById('addCommentBtn');
+    const commentInput = document.getElementById('commentInput');
     const commentsList = document.getElementById('commentsList');
     const titleEl = document.querySelector('.series-title');
     const bannerImg = document.querySelector('.series-banner img');
-    const descEl = document.querySelector('.series-description');
-    const ratingValue = document.querySelector('.rating-value');
+    const descEl = document.getElementById('seriesDescription');
+    const ratingValue = document.getElementById('ratingValue');
+    const rateStars = document.getElementById('rateStars');
+    const stars = rateStars ? rateStars.querySelectorAll('.star') : [];
+    const ratingFeedback = document.getElementById('ratingFeedback');
 
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'), 10);
@@ -26,12 +31,27 @@
     function renderComment(c) {
         const el = document.createElement('div');
         el.className = 'comment-item';
-        el.innerHTML = `<strong>${c.username}</strong> <time>${new Date(c.created_at).toLocaleString()}</time><p>${c.body}</p>`;
+        const avatarLetter = c.username ? c.username.charAt(0).toUpperCase() : '?';
+        el.innerHTML = `
+            <div class="comment-avatar">${avatarLetter}</div>
+            <div class="comment-body">
+                <div class="comment-header">
+                    <strong class="comment-username">${c.username}</strong>
+                    <span class="comment-date">${new Date(c.created_at).toLocaleString()}</span>
+                </div>
+                <p class="comment-text">${c.body}</p>
+            </div>`;
         return el;
     }
 
+    function setStars(score) {
+        stars.forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.score) <= score);
+        });
+    }
+
     // Load series data
-    fetch(`/api/series/${id}`, { credentials: 'include' })
+    fetch(`${API_BASE}/api/series/${id}`, { credentials: 'include' })
         .then(r => r.ok ? r.json() : Promise.reject(r))
         .then(data => {
             const s = data.series;
@@ -42,7 +62,10 @@
             if (s.cover_url) bannerImg.src = s.cover_url;
             ratingValue.textContent = (s.average_rating != null) ? `${s.average_rating} / 10` : '—';
 
-            // episodes
+            if (s.average_rating != null) {
+                setStars(Math.round(s.average_rating));
+            }
+
             const eps = data.episodes || [];
             episodesList.innerHTML = '';
             eps.forEach(ep => episodesList.appendChild(renderEpisode(ep)));
@@ -52,9 +75,45 @@
             titleEl.textContent = 'Ошибка загрузки сериала';
         });
 
+    // Rating stars click
+    let rated = false;
+    stars.forEach(s => {
+        s.addEventListener('click', async function() {
+            const score = parseInt(this.dataset.score);
+            try {
+                const res = await fetch(`${API_BASE}/api/series/${id}/rating`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score })
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при оценке');
+                    return;
+                }
+                rated = true;
+                setStars(score);
+                if (ratingFeedback) {
+                    ratingFeedback.textContent = `Ваша оценка: ${score}`;
+                    ratingFeedback.classList.remove('hidden');
+                }
+                // Reload average rating
+                const ratingRes = await fetch(`${API_BASE}/api/series/${id}/rating`, { credentials: 'include' });
+                if (ratingRes.ok) {
+                    const ratingData = await ratingRes.json();
+                    ratingValue.textContent = `${ratingData.average} / 10`;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Ошибка сети при оценке');
+            }
+        });
+    });
+
     // Load comments
     function loadComments() {
-        fetch(`/api/series/${id}/comments`, { credentials: 'include' })
+        fetch(`${API_BASE}/api/series/${id}/comments`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : Promise.reject(r))
             .then(list => {
                 commentsList.innerHTML = '';
@@ -69,13 +128,17 @@
 
     loadComments();
 
+    // Submit comment from textarea
     if (addCommentBtn) {
         addCommentBtn.addEventListener('click', async function(e) {
             e.preventDefault();
-            const body = prompt('Введите комментарий:');
-            if (!body) return;
+            const body = commentInput ? commentInput.value.trim() : '';
+            if (!body) {
+                alert('Введите текст комментария');
+                return;
+            }
             try {
-                const res = await fetch(`/api/series/${id}/comments`, {
+                const res = await fetch(`${API_BASE}/api/series/${id}/comments`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
@@ -86,11 +149,21 @@
                     alert(err.error || 'Не удалось добавить комментарий');
                     return;
                 }
-                alert('Комментарий добавлен');
+                if (commentInput) commentInput.value = '';
                 loadComments();
             } catch (err) {
                 console.error(err);
                 alert('Ошибка сети при добавлении комментария');
+            }
+        });
+    }
+
+    // Ctrl+Enter to submit comment
+    if (commentInput) {
+        commentInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                addCommentBtn.click();
             }
         });
     }
@@ -102,29 +175,14 @@
         searchInput.style.cursor = 'text';
         searchInput.style.userSelect = 'auto';
 
-        searchInput.addEventListener('input', function(e) {
-            console.log('Поиск:', e.target.value);
-        });
-
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const searchQuery = searchInput.value.trim();
                 if (searchQuery) {
-                    sessionStorage.setItem('lastSearchQuery', searchQuery);
+                    window.location.href = `search.html?q=${encodeURIComponent(searchQuery)}`;
                 }
-                window.location.href = 'start.html';
             }
         });
-    }
-
-    const userDiv = document.getElementById('userNameDisplay');
-    if (userDiv) {
-        userDiv.style.cursor = 'default';
-    }
-
-    const logo = document.querySelector('.logo-icon');
-    if (logo) {
-        logo.style.cursor = 'default';
     }
 })(); 

@@ -15,12 +15,17 @@ function renderCategoryCard(slug, name, imageUrl) {
     const card = document.createElement('div');
     card.className = 'category-card';
     card.onclick = () => window.location.href = `category.html?slug=${encodeURIComponent(slug)}`;
-    if (imageUrl) {
-        card.style.backgroundImage = `url('${imageUrl}')`;
-        card.style.backgroundSize = 'cover';
-        card.style.backgroundPosition = 'center';
-        card.style.backgroundRepeat = 'no-repeat';
-    }
+
+    const img = document.createElement('img');
+    img.className = 'category-img';
+    img.src = imageUrl || '';
+    img.alt = name;
+    img.loading = 'lazy';
+    img.onerror = function() {
+        this.style.display = 'none';
+    };
+
+    card.appendChild(img);
     return card;
 }
 
@@ -70,12 +75,26 @@ async function loadRecommendedSeries() {
                 this.src = 'https://placehold.co/150x200';
             };
             
+            const info = document.createElement('div');
+            info.className = 'series-card-info';
+
             const title = document.createElement('div');
             title.className = 'title';
             title.textContent = s.title;
 
+            const desc = document.createElement('div');
+            desc.className = 'desc';
+            desc.textContent = s.description || '';
+
+            const rating = document.createElement('div');
+            rating.className = 'rating';
+            rating.textContent = `★ ${s.average_rating ?? '—'}`;
+
+            info.appendChild(title);
+            info.appendChild(desc);
+            info.appendChild(rating);
             card.appendChild(img);
-            card.appendChild(title);
+            card.appendChild(info);
             container.appendChild(card);
         });
     } catch (err) {
@@ -83,21 +102,8 @@ async function loadRecommendedSeries() {
     }
 }
 
-// Check authentication and update UI
+// Load categories and series
 async function checkAuthentication() {
-    try {
-        const response = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
-        if (response.ok) {
-            const user = await response.json();
-            const userDisplay = document.getElementById('userNameDisplay');
-            if (userDisplay) {
-                userDisplay.innerHTML = `👤 ${user.username}`;
-            }
-        }
-    } catch (err) {
-        console.error('Not authenticated:', err);
-    }
-    // Load categories and series regardless of auth/network status
     await loadCategories();
     await loadRecommendedSeries();
 }
@@ -106,10 +112,11 @@ async function checkAuthentication() {
 async function logout() {
     try {
         await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' });
-        window.location.href = 'central.html';
     } catch (err) {
         console.error('Logout error:', err);
     }
+    localStorage.removeItem('prAIm_user');
+    window.location.href = 'central.html';
 }
 
 // Fallback for old HTML structure
