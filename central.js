@@ -1,7 +1,129 @@
-(function() {
-    // --------------------------------------------------------------
-    // 1. ДАННЫЕ ДЛЯ КАТЕГОРИЙ (10 штук от fon1.png до fon10.png)
-    // --------------------------------------------------------------
+// API configuration
+const API_BASE = `http://${window.location.hostname}:8081`;
+
+const categories = [
+    { slug: 'fruits', name: 'Фрукты', image: 'assets/images/fruits.png' },
+    { slug: 'asian', name: 'Азия', image: 'assets/images/asian.png' },
+
+    { slug: 'romance', name: 'Романтика', image: 'assets/images/romantic.png' },
+    { slug: 'comedy', name: 'Комедия', image: 'assets/images/comedy.png' },
+    { slug: 'horror', name: 'Ужасы', image: 'assets/images/horror.png' },
+    { slug: 'drama', name: 'Драма', image: 'assets/images/drama.png' },
+];
+
+function renderCategoryCard(slug, name, imageUrl) {
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.onclick = () => window.location.href = `category.html?slug=${encodeURIComponent(slug)}`;
+
+    const img = document.createElement('img');
+    img.className = 'category-img';
+    img.src = imageUrl || '';
+    img.alt = name;
+    img.loading = 'lazy';
+    img.onerror = function() {
+        this.style.display = 'none';
+    };
+
+    card.appendChild(img);
+    return card;
+}
+
+async function loadCategories() {
+    const container = document.getElementById('categoriesContainer');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/categories`, { credentials: 'include' });
+        if (response.ok) {
+            const apiCategories = await response.json();
+            container.innerHTML = '';
+            apiCategories.filter(cat => cat.slug !== 'anime').forEach(cat => {
+                const entry = categories.find(c => c.slug === cat.slug);
+                container.appendChild(renderCategoryCard(cat.slug, cat.name, entry ? entry.image : ''));
+            });
+            return;
+        }
+    } catch (_) {}
+
+    // Fallback: render from static mapping
+    container.innerHTML = '';
+    categories.forEach(cat => {
+        container.appendChild(renderCategoryCard(cat.slug, cat.name, cat.image));
+    });
+}
+
+// Load recommended/authenticated series
+async function loadRecommendedSeries() {
+    try {
+        const response = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to load series');
+        const series = await response.json();
+
+        const container = document.getElementById('seriesContainer');
+        if (!container) return;
+
+        container.innerHTML = '';
+        series.slice(0, 8).forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'series-card';
+            card.onclick = () => window.location.href = `series.html?id=${s.id}`;
+
+            const img = document.createElement('img');
+            img.src = s.cover_url || 'https://placehold.co/150x200';
+            img.onerror = function() {
+                this.src = 'https://placehold.co/150x200';
+            };
+            
+            const info = document.createElement('div');
+            info.className = 'series-card-info';
+
+            const title = document.createElement('div');
+            title.className = 'title';
+            title.textContent = s.title;
+
+            const desc = document.createElement('div');
+            desc.className = 'desc';
+            desc.textContent = s.description || '';
+
+            const rating = document.createElement('div');
+            rating.className = 'rating';
+            rating.textContent = `★ ${s.average_rating ?? '—'}`;
+
+            info.appendChild(title);
+            info.appendChild(desc);
+            info.appendChild(rating);
+            card.appendChild(img);
+            card.appendChild(info);
+            container.appendChild(card);
+        });
+    } catch (err) {
+        console.error('Error loading series:', err);
+    }
+}
+
+// Load categories and series
+async function checkAuthentication() {
+    await loadCategories();
+    await loadRecommendedSeries();
+}
+
+// Logout function
+async function logout() {
+    try {
+        await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+    } catch (err) {
+        console.error('Logout error:', err);
+    }
+    localStorage.removeItem('prAIm_user');
+    window.location.href = 'central.html';
+}
+
+// Fallback for old HTML structure
+function setupLegacyCategories() {
+    const categoriesFlex = document.getElementById('categoriesFlex');
+    if (!categoriesFlex) return;
+
     const categoriesData = [];
     for (let i = 1; i <= 10; i++) {
         categoriesData.push({
@@ -9,22 +131,6 @@
             imgSrc: `fon${i}.png`
         });
     }
-
-    // --------------------------------------------------------------
-    // 2. ДАННЫЕ ДЛЯ ПОПУЛЯРНОГО (еще 10 карточек)
-    // --------------------------------------------------------------
-    const popularData = [];
-    for (let i = 1; i <= 10; i++) {
-        popularData.push({
-            id: i,
-            imgSrc: `popular${i}.png`
-        });
-    }
-
-    const categoriesFlex = document.getElementById('categoriesFlex');
-    const popularFlex = document.getElementById('popularFlex');
-    const categoriesTrack = document.getElementById('categoriesTrack');
-    const popularTrack = document.getElementById('popularTrack');
 
     function renderCards(container, dataArray, targetUrl = 'start.html') {
         if (!container) return;
@@ -52,7 +158,19 @@
         });
     }
 
-    // Функция прокрутки
+    renderCards(categoriesFlex, categoriesData);
+
+    const popularFlex = document.getElementById('popularFlex');
+    const popularData = [];
+    for (let i = 1; i <= 10; i++) {
+        popularData.push({
+            id: i,
+            imgSrc: `popular${i}.png`
+        });
+    }
+    renderCards(popularFlex, popularData);
+
+    // Setup scroll controls
     function scrollTrack(trackElement, direction) {
         if (!trackElement) return;
         const scrollAmount = 280;
@@ -63,12 +181,22 @@
         }
     }
 
-    // --------------------------------------------------------------
-    // 3. НАСТРОЙКА СТРЕЛОК ДЛЯ КАТЕГОРИЙ
-    // --------------------------------------------------------------
+    // Setup scroll controls
+    function scrollTrack(trackElement, direction) {
+        if (!trackElement) return;
+        const scrollAmount = 280;
+        if (direction === 'left') {
+            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else if (direction === 'right') {
+            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+
+    const categoriesTrack = document.getElementById('categoriesTrack');
+    const popularTrack = document.getElementById('popularTrack');
+
     const leftCategories = document.getElementById('scrollLeftCategories');
     const rightCategories = document.getElementById('scrollRightCategories');
-
     if (leftCategories) {
         leftCategories.addEventListener('click', (e) => {
             e.preventDefault();
@@ -82,12 +210,8 @@
         });
     }
 
-    // --------------------------------------------------------------
-    // 4. НАСТРОЙКА СТРЕЛОК ДЛЯ ПОПУЛЯРНОГО
-    // --------------------------------------------------------------
     const leftPopular = document.getElementById('scrollLeftPopular');
     const rightPopular = document.getElementById('scrollRightPopular');
-
     if (leftPopular) {
         leftPopular.addEventListener('click', (e) => {
             e.preventDefault();
@@ -101,58 +225,7 @@
         });
     }
 
-    // --------------------------------------------------------------
-    // 5. ПОЛЕ ПОИСКА (РАБОТАЕТ, НЕ ПЕРЕБРАСЫВАЕТ)
-    // --------------------------------------------------------------
-    const searchInput = document.getElementById('globalSearch');
-    if (searchInput) {
-        searchInput.removeAttribute('readonly');
-        searchInput.value = '';
-        searchInput.style.cursor = 'text';
-        searchInput.style.userSelect = 'auto';
-        
-        // Просто демо-реакция на ввод
-        searchInput.addEventListener('input', (e) => {
-            console.log('Поиск:', e.target.value);
-        });
-
-        searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-        e.preventDefault();
-        const searchQuery = searchInput.value.trim();
-        console.log('Поисковый запрос:', searchQuery);
-        // Сохраняем запрос в sessionStorage (опционально)
-        if (searchQuery) {
-            sessionStorage.setItem('lastSearchQuery', searchQuery);
-        }
-        window.location.href = 'start.html';
-    }
-});
-    }
-
-    // --------------------------------------------------------------
-    // 6. НЕ ИНТЕРАКТИВНЫЕ ЭЛЕМЕНТЫ (баннер, логотип)
-    //    Убираем у них курсор pointer и обработчики
-    // --------------------------------------------------------------
-    const banner = document.querySelector('.hero-banner');
-    if (banner) {
-        banner.style.cursor = 'default';
-    }
-    
-    const logo = document.querySelector('.logo-icon');
-    if (logo) {
-        logo.style.cursor = 'default';
-    }
-
-    // Юзернейм  тоже не должен быть интерактивным (по умолчанию)
-    const userDiv = document.getElementById('userNameDisplay');
-    if (userDiv) {
-        userDiv.style.cursor = 'default';
-    }
-
-    // --------------------------------------------------------------
-    // 7. ГОРИЗОНТАЛЬНАЯ ПРОКРУТКА КОЛЕСИКОМ МЫШИ (для обеих лент)
-    // --------------------------------------------------------------
+    // Setup wheel scroll
     function setupWheelScroll(trackElement) {
         if (!trackElement) return;
         trackElement.addEventListener('wheel', (e) => {
@@ -165,68 +238,49 @@
 
     setupWheelScroll(categoriesTrack);
     setupWheelScroll(popularTrack);
+    renderCards(categoriesFlex, categoriesData);
+    renderCards(popularFlex, popularData);
+}
 
-    // --------------------------------------------------------------
-    // 8. ПРОКРУТКА ПЕРЕТЯГИВАНИЕМ МЫШИ (drag to scroll) для обеих лент
-    // --------------------------------------------------------------
-    function setupDragScroll(trackElement) {
-        if (!trackElement) return;
-        let isDown = false;
-        let startX;
-        let scrollLeftStart;
 
-        trackElement.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.scroll-btn')) return;
-            isDown = true;
-            startX = e.pageX - trackElement.offsetLeft;
-            scrollLeftStart = trackElement.scrollLeft;
-            trackElement.style.cursor = 'grabbing';
-            trackElement.style.userSelect = 'none';
-        });
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if we have new HTML structure with #categoriesContainer
+    const newContainer = document.getElementById('categoriesContainer');
+    
+    if (newContainer) {
+        // Use new functions for new structure
+        checkAuthentication();
 
-        window.addEventListener('mouseup', () => {
-            if (!isDown) return;
-            isDown = false;
-            trackElement.style.cursor = 'grab';
-            trackElement.style.userSelect = '';
-        });
+        // Setup global search if exists
+        const globalSearch = document.getElementById('globalSearch');
+        if (globalSearch) {
+            globalSearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const query = globalSearch.value.trim();
+                    if (query) {
+                        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        }
 
-        window.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - trackElement.offsetLeft;
-            const walk = (x - startX) * 1.2;
-            trackElement.scrollLeft = scrollLeftStart - walk;
-        });
-
-        trackElement.style.cursor = 'grab';
+        // Scroll controls for categories
+        const track = document.getElementById('categoriesTrack');
+        const catLeft = document.getElementById('catScrollLeft');
+        const catRight = document.getElementById('catScrollRight');
+        if (track && catLeft) {
+            catLeft.addEventListener('click', () => {
+                track.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+        }
+        if (track && catRight) {
+            catRight.addEventListener('click', () => {
+                track.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+        }
+    } else {
+        // Fallback for legacy HTML structure
+        setupLegacyCategories();
     }
-
-    setupDragScroll(categoriesTrack);
-    setupDragScroll(popularTrack);
-
-    // --------------------------------------------------------------
-    // 9. FALLBACK ДЛЯ ИЗОБРАЖЕНИЙ
-    // --------------------------------------------------------------
-    const bannerImg = document.querySelector('.hero-banner img');
-    if (bannerImg && bannerImg.src.includes('add.png')) {
-        bannerImg.onerror = function() {
-            this.onerror = null;
-            this.src = 'https://placehold.co/1600x400/1f2a48/white?text=';
-        };
-    }
-
-    const logoImg = document.querySelector('.logo-icon img');
-    if (logoImg) {
-        logoImg.onerror = function() {
-            this.onerror = null;
-            this.src = 'https://placehold.co/32x32/2c3e66/white?text=🎬';
-        };
-    }
-
-    // --------------------------------------------------------------
-    // 10. ЗАПУСК ОТРИСОВКИ КАРТОЧЕК
-    // --------------------------------------------------------------
-    renderCards(categoriesFlex, categoriesData, (item) => `category.html?id=${item.id}`);
-    renderCards(popularFlex, popularData, 'series.html');
-})();
+});

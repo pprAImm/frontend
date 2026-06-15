@@ -1,19 +1,170 @@
 (function() {
+    const API_BASE = `http://${window.location.hostname}:8081`;
     const episodesList = document.getElementById('episodesList');
-    if (episodesList) {
-        episodesList.addEventListener('click', function(e) {
-            const episodeCard = e.target.closest('.episode-card');
-            if (episodeCard) {
-                window.location.href = 'start.html';
+    const addCommentBtn = document.getElementById('addCommentBtn');
+    const commentInput = document.getElementById('commentInput');
+    const commentsList = document.getElementById('commentsList');
+    const titleEl = document.querySelector('.series-title');
+    const bannerImg = document.querySelector('.series-banner img');
+    const descEl = document.getElementById('seriesDescription');
+    const ratingValue = document.getElementById('ratingValue');
+    const rateStars = document.getElementById('rateStars');
+    const stars = rateStars ? rateStars.querySelectorAll('.star') : [];
+    const ratingFeedback = document.getElementById('ratingFeedback');
+
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get('id'), 10);
+
+    if (!id) {
+        titleEl.textContent = 'Сериал не указан';
+        return;
+    }
+
+    function renderEpisode(ep) {
+        const card = document.createElement('div');
+        card.className = 'episode-card';
+        card.dataset.episode = ep.id;
+        card.innerHTML = `<span class="episode-number">Серия ${ep.episode_num ?? ''}</span><span class="episode-title">${ep.title ?? ''}</span>`;
+        return card;
+    }
+
+    function renderComment(c) {
+        const el = document.createElement('div');
+        el.className = 'comment-item';
+        const avatarLetter = c.username ? c.username.charAt(0).toUpperCase() : '?';
+        el.innerHTML = `
+            <div class="comment-avatar">${avatarLetter}</div>
+            <div class="comment-body">
+                <div class="comment-header">
+                    <strong class="comment-username">${c.username}</strong>
+                    <span class="comment-date">${new Date(c.created_at).toLocaleString()}</span>
+                </div>
+                <p class="comment-text">${c.body}</p>
+            </div>`;
+        return el;
+    }
+
+    function setStars(score) {
+        stars.forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.score) <= score);
+        });
+    }
+
+    // Load series data
+    fetch(`${API_BASE}/api/series/${id}`, { credentials: 'include' })
+        .then(r => r.ok ? r.json() : Promise.reject(r))
+        .then(data => {
+            const s = data.series;
+            if (!s) throw new Error('Series not found');
+
+            titleEl.textContent = s.title || 'Сериал';
+            descEl.textContent = s.description || '';
+            if (s.cover_url) bannerImg.src = s.cover_url;
+            ratingValue.textContent = (s.average_rating != null) ? `${s.average_rating} / 10` : '—';
+
+            if (s.average_rating != null) {
+                setStars(Math.round(s.average_rating));
+            }
+
+            const eps = data.episodes || [];
+            episodesList.innerHTML = '';
+            eps.forEach(ep => episodesList.appendChild(renderEpisode(ep)));
+        })
+        .catch(err => {
+            console.error('Failed to load series:', err);
+            titleEl.textContent = 'Ошибка загрузки сериала';
+        });
+
+    // Rating stars click
+    let rated = false;
+    stars.forEach(s => {
+        s.addEventListener('click', async function() {
+            const score = parseInt(this.dataset.score);
+            try {
+                const res = await fetch(`${API_BASE}/api/series/${id}/rating`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score })
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при оценке');
+                    return;
+                }
+                rated = true;
+                setStars(score);
+                if (ratingFeedback) {
+                    ratingFeedback.textContent = `Ваша оценка: ${score}`;
+                    ratingFeedback.classList.remove('hidden');
+                }
+                // Reload average rating
+                const ratingRes = await fetch(`${API_BASE}/api/series/${id}/rating`, { credentials: 'include' });
+                if (ratingRes.ok) {
+                    const ratingData = await ratingRes.json();
+                    ratingValue.textContent = `${ratingData.average} / 10`;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Ошибка сети при оценке');
+            }
+        });
+    });
+
+    // Load comments
+    function loadComments() {
+        fetch(`${API_BASE}/api/series/${id}/comments`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : Promise.reject(r))
+            .then(list => {
+                commentsList.innerHTML = '';
+                if (!list || list.length === 0) {
+                    commentsList.innerHTML = '<p class="comments-empty">Комментариев пока нет. Будьте первым!</p>';
+                    return;
+                }
+                list.forEach(c => commentsList.appendChild(renderComment(c)));
+            })
+            .catch(err => console.debug('Failed to load comments', err));
+    }
+
+    loadComments();
+
+    // Submit comment from textarea
+    if (addCommentBtn) {
+        addCommentBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const body = commentInput ? commentInput.value.trim() : '';
+            if (!body) {
+                alert('Введите текст комментария');
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/series/${id}/comments`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ body })
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    alert(err.error || 'Не удалось добавить комментарий');
+                    return;
+                }
+                if (commentInput) commentInput.value = '';
+                loadComments();
+            } catch (err) {
+                console.error(err);
+                alert('Ошибка сети при добавлении комментария');
             }
         });
     }
 
-    const addCommentBtn = document.getElementById('addCommentBtn');
-    if (addCommentBtn) {
-        addCommentBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'start.html';
+    // Ctrl+Enter to submit comment
+    if (commentInput) {
+        commentInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                addCommentBtn.click();
+            }
         });
     }
 
@@ -24,29 +175,14 @@
         searchInput.style.cursor = 'text';
         searchInput.style.userSelect = 'auto';
 
-        searchInput.addEventListener('input', function(e) {
-            console.log('Поиск:', e.target.value);
-        });
-
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 const searchQuery = searchInput.value.trim();
                 if (searchQuery) {
-                    sessionStorage.setItem('lastSearchQuery', searchQuery);
+                    window.location.href = `search.html?q=${encodeURIComponent(searchQuery)}`;
                 }
-                window.location.href = 'start.html';
             }
         });
-    }
-
-    const userDiv = document.getElementById('userNameDisplay');
-    if (userDiv) {
-        userDiv.style.cursor = 'default';
-    }
-
-    const logo = document.querySelector('.logo-icon');
-    if (logo) {
-        logo.style.cursor = 'default';
     }
 })(); 

@@ -1,4 +1,5 @@
 (function() {
+    const API_BASE = `http://${window.location.hostname}:8081`;
     const nameForm = document.getElementById('nameForm');
     const passwordForm = document.getElementById('passwordForm');
     const logoutButton = document.getElementById('logoutButton');
@@ -38,7 +39,11 @@
     }
 
     if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+            } catch (_) {}
+            localStorage.removeItem('prAIm_user');
             window.location.href = 'login.html';
         });
     }
