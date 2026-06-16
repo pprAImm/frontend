@@ -27,7 +27,7 @@
                 }
 
                 const userData = await res.json();
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username }));
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username, email: userData.email || '' }));
 
                 navigateWithAnimation('central.html');
             } catch (e) {
@@ -59,7 +59,7 @@
                 }
 
                 const userData = await res.json();
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username }));
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username, email: userData.email || '' }));
 
                 navigateWithAnimation('central.html');
             } catch (e) {
