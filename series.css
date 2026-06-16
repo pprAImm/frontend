@@ -69,6 +69,7 @@
 
 .rate-stars {
     display: flex;
+    flex-direction: row-reverse;
     gap: 4px;
 }
 
@@ -76,16 +77,24 @@
     background: none;
     border: none;
     font-size: 1.6rem;
-    color: #1c1d2b;
+    color: rgba(255, 255, 255, 0.15);
     cursor: pointer;
     transition: color 0.15s ease, transform 0.15s ease;
     padding: 2px;
     line-height: 1;
 }
 
-.rate-stars .star:hover {
+.rate-stars .star:hover,
+.rate-stars .star:hover ~ .star {
     color: #ff5fa3;
+}
+
+.rate-stars .star:hover {
     transform: scale(1.2);
+}
+
+.rate-stars .star:hover ~ .star {
+    transform: scale(1.05);
 }
 
 .rate-stars .star.active {

@@ -42,7 +42,15 @@
     if (userDisplay) {
         userDisplay.style.cursor = 'pointer';
         userDisplay.addEventListener('click', () => {
-            window.location.href = 'user.html';
+            let authed = false;
+            try {
+                const cached = localStorage.getItem('prAIm_user');
+                if (cached) {
+                    const data = JSON.parse(cached);
+                    if (data && data.username) authed = true;
+                }
+            } catch (_) {}
+            window.location.href = authed ? 'user.html' : 'registration.html';
         });
     }
 })();

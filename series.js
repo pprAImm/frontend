@@ -25,6 +25,9 @@
         card.className = 'episode-card';
         card.dataset.episode = ep.id;
         card.innerHTML = `<span class="episode-number">Серия ${ep.episode_num ?? ''}</span><span class="episode-title">${ep.title ?? ''}</span>`;
+        card.addEventListener('click', function() {
+            window.location.href = `player.html?seriesId=${id}&episodeId=${ep.id}`;
+        });
         return card;
     }
 

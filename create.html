@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать сериал — prAIm</title>
+    <link rel="stylesheet" href="central.css">
+    <link rel="stylesheet" href="create.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="top-bar">
+        <div class="logo-icon">
+            <img src="assets/images/ppraimm_logo.png" alt="ppraimm">
+            <span class="logo-text">prAIm</span>
+        </div>
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="globalSearch" placeholder="Поиск фильмов, сериалов, жанров...">
+        </div>
+        <div class="user-greeting" id="userNameDisplay">guest</div>
+    </div>
+
+    <div class="create-layout">
+        <div class="create-image-panel">
+            <div class="create-image-area" id="imageDropArea">
+                <div class="create-image-placeholder" id="imagePlaceholder">
+                    <div class="upload-icon">+</div>
+                    <span class="upload-label">Загрузить обложку</span>
+                </div>
+                <img id="imagePreview" class="create-image-preview" style="display:none;">
+                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+            </div>
+        </div>
+
+        <div class="create-form-panel">
+            <label class="create-field-label" for="seriesTitle">Название</label>
+            <input type="text" id="seriesTitle" class="create-input" placeholder="Введите название сериала">
+
+            <label class="create-field-label" for="seriesDescription">Описание</label>
+            <textarea id="seriesDescription" class="create-textarea" placeholder="Введите описание сериала" rows="5"></textarea>
+
+            <label class="create-field-label">Категории</label>
+            <div class="category-selector" id="categoriesContainer"></div>
+        </div>
+    </div>
+
+    <div class="episodes-section">
+        <div class="episodes-header">
+            <span class="episodes-header-text">добавьте серию</span>
+            <button class="episode-add-btn" id="addEpisodeBtn">+</button>
+        </div>
+        <div class="episodes-list" id="episodesList"></div>
+    </div>
+
+    <button class="button publish-btn" id="publishBtn">Выложить</button>
+</div>
+
+<script src="topbar.js"></script>
+<script src="create.js"></script>
+</body>
+</html>
