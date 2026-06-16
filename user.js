@@ -1,5 +1,140 @@
 (function() {
     const API_BASE = `http://${window.location.hostname}:8081`;
+
+    // === PROFILE HERO ===
+    function loadProfile() {
+        const nameEl = document.getElementById('profileUserName');
+        const emailEl = document.getElementById('profileUserEmail');
+        const avatarEl = document.getElementById('profileAvatar');
+        try {
+            const cached = localStorage.getItem('prAIm_user');
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (data.username) {
+                    nameEl.textContent = data.username;
+                    avatarEl.textContent = data.username.charAt(0).toUpperCase();
+                }
+            }
+        } catch (_) {}
+        if (emailEl && !emailEl.textContent.trim()) {
+            emailEl.textContent = 'guest@example.com';
+        }
+    }
+    loadProfile();
+
+    // === MY SERIES ===
+    const flex = document.getElementById('profileFlex');
+    if (flex) {
+        const addCard = document.createElement('div');
+        addCard.className = 'my-series-add';
+        addCard.addEventListener('click', function() {
+            window.location.href = 'start.html';
+        });
+        const addIcon = document.createElement('div');
+        addIcon.className = 'add-icon';
+        addIcon.textContent = '+';
+        const addLabel = document.createElement('div');
+        addLabel.className = 'add-label';
+        addLabel.textContent = 'добавить';
+        addCard.appendChild(addIcon);
+        addCard.appendChild(addLabel);
+        flex.appendChild(addCard);
+
+        (async function loadSeries() {
+            try {
+                const resp = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
+                if (!resp.ok) throw new Error('Failed to load series');
+                const series = await resp.json();
+                series.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'my-series-card';
+                    card.addEventListener('click', function() {
+                        window.location.href = `series.html?id=${s.id}`;
+                    });
+
+                    const img = document.createElement('img');
+                    img.className = 'my-series-card-img';
+                    img.src = s.cover_url || 'https://placehold.co/220x132/23253a/white?text=🎬&font=montserrat';
+                    img.alt = s.title || '';
+                    img.loading = 'lazy';
+                    img.onerror = function() {
+                        this.src = 'https://placehold.co/220x132/23253a/white?text=🎬&font=montserrat';
+                    };
+
+                    const label = document.createElement('div');
+                    label.className = 'my-series-card-label';
+                    label.textContent = s.title || 'Name';
+
+                    card.appendChild(img);
+                    card.appendChild(label);
+                    flex.appendChild(card);
+                });
+            } catch (_) {
+                for (let i = 1; i <= 8; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'my-series-card';
+                    card.addEventListener('click', function() {
+                        window.location.href = 'series.html';
+                    });
+                    const img = document.createElement('img');
+                    img.className = 'my-series-card-img';
+                    img.src = `popular${i}.png`;
+                    img.alt = 'Сериал';
+                    img.onerror = function() {
+                        this.onerror = null;
+                        this.src = 'https://placehold.co/220x132/23253a/white?text=🎬&font=montserrat';
+                    };
+                    const label = document.createElement('div');
+                    label.className = 'my-series-card-label';
+                    label.textContent = 'Name';
+                    card.appendChild(img);
+                    card.appendChild(label);
+                    flex.appendChild(card);
+                }
+            }
+        })();
+
+        const track = document.getElementById('profileTrack');
+        if (track) {
+            track.addEventListener('wheel', function(e) {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    this.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+
+            let isDown = false;
+            let startX;
+            let scrollLeftStart;
+
+            track.addEventListener('mousedown', function(e) {
+                if (e.target.closest('.my-series-card, .my-series-add')) return;
+                isDown = true;
+                startX = e.pageX - this.offsetLeft;
+                scrollLeftStart = this.scrollLeft;
+                this.style.cursor = 'grabbing';
+                this.style.userSelect = 'none';
+            });
+
+            window.addEventListener('mouseup', function() {
+                if (!isDown) return;
+                isDown = false;
+                track.style.cursor = 'grab';
+                track.style.userSelect = '';
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.2;
+                track.scrollLeft = scrollLeftStart - walk;
+            });
+
+            track.style.cursor = 'grab';
+        }
+    }
+
     const nameForm = document.getElementById('nameForm');
     const passwordForm = document.getElementById('passwordForm');
     const logoutButton = document.getElementById('logoutButton');
