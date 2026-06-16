@@ -1,5 +1,5 @@
 (function() {
-const API_BASE = `http://${window.location.hostname}:8081`;
+const API_BASE = '';
 
 const searchInput = document.getElementById('searchInput');
 const resultsGrid = document.getElementById('resultsGrid');
