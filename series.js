@@ -1,5 +1,5 @@
 (function() {
-    const API_BASE = `http://${window.location.hostname}:8081`;
+    const API_BASE = '';
     const episodesList = document.getElementById('episodesList');
     const addCommentBtn = document.getElementById('addCommentBtn');
     const commentInput = document.getElementById('commentInput');

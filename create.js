@@ -1,5 +1,5 @@
 (function() {
-    const API_BASE = `http://${window.location.hostname}:8081`;
+    const API_BASE = '';
 
     const imageArea = document.getElementById('imageDropArea');
     const imageInput = document.getElementById('imageInput');
