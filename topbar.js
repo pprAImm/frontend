@@ -1,5 +1,5 @@
 (function() {
-    const API_BASE = `http://${window.location.hostname}:8081`;
+    const API_BASE = '';
 
     function setUserName(name) {
         const el = document.getElementById('userNameDisplay');

@@ -1,5 +1,5 @@
 // API configuration
-const API_BASE = `http://${window.location.hostname}:8081`;
+const API_BASE = '';
 
 const categories = [
     { slug: 'fruits', name: 'Фрукты', image: 'assets/images/fruits.png' },
