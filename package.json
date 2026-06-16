@@ -4,9 +4,9 @@
   "private": true,
   "description": "Фронтенд платформы для просмотра ИИ-сериалов",
   "scripts": {
-    "dev": "python3 -m http.server 3000",
-    "dev:login": "python3 -m http.server 3000",
-    "dev:central": "python3 -m http.server 3000",
+    "dev": "npx serve . --listen 8080 --no-clipboard",
+    "dev:login": "npx serve . --listen 8080 --no-clipboard",
+    "dev:central": "npx serve . --listen 8080 --no-clipboard",
     "lint": "npx eslint **/*.js",
     "format": "npx prettier --write **/*.{js,css,html}"
   },
