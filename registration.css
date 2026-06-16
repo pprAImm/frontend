@@ -1,75 +1,88 @@
 body {
-       font-family: Arial, sans-serif;
-       color: rgb(240, 203, 203);
-       /*background-color: #3d0c0c; */
-       background-image: url('assets/images/background1.png');
-       background-size: cover; 
-       background-position: center;
-       background-repeat: no-repeat;
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       height: 100vh;
-       margin: 0;
-   }
+    font-family: Arial, sans-serif;
+    color: #f0f0f0;
+    background: #121320;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
 
-/* Make sizing easier: include padding/border in width calculations */
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
-   .registration-container {
-       background: rgb(18, 3, 3);
-       padding: 40px;
-       border-radius: 30px;
-       box-shadow: 0 0 10px rgb(91, 17, 17); 
+.registration-container {
+    background: #15161e;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 0 30px rgba(139, 61, 240, 0.15);
     width: 90%;
     max-width: 420px;
-   }
+}
 
-   h1 {
-       margin-bottom: 20px;
-   }
+h1 {
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
 
-   label { 
-       display: block;
-       margin-bottom: 5px;
-   }
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.7);
+}
 
-   input {
-       width: 100%;
-       padding: 10px;
-       margin-bottom: 15px;
-       border: 1px solid rgb(240, 203, 203);
-       border-radius: 10px;
-   }
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    background: #1c1d2b;
+    color: #f0f0f0;
+    outline: none;
+    transition: border-color 0.2s;
+}
 
-   button {
-       width: 100%;
-       padding: 10px;
-       background-color: #936363;
-       color: rgb(23, 5, 5);
-       border: none;
-       border-radius: 10px;
-       cursor: pointer;
-   }
+input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
 
-   button:hover {
-       background-color: #603636;
-   }
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #3b9eff);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-/* Allow page to scroll if viewport is small */
-/* (removed overflow:hidden to prevent clipping on small screens) */
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+}
 
-/* ===== АНИМАЦИЯ ПЕРЕКЛЮЧЕНИЯ МЕЖДУ ОКНАМИ ===== */
-/* Этот CSS добавляет плавный fade-эффект при переходе между страницами */
+a {
+    color: #8b5cf6;
+    text-decoration: none;
+}
 
-/* Базовое состояние страницы — полностью видима */
+a:hover {
+    color: #3b9eff;
+}
+
 body {
     animation: fadeInPage 1s ease-out;
 }
 
-/* Ключевые кадры для появления страницы */
 @keyframes fadeInPage {
     from {
         opacity: 0;
@@ -95,7 +108,6 @@ body.page-exit {
     }
 }
 
-/* Дополнительная анимация для контейнера формы — легкий подъём */
 .registration-container {
     animation: floatUp 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
@@ -111,9 +123,7 @@ body.page-exit {
     }
 }
 
-/* Добавьте этот код в ваш CSS файл */
 .fade-out {
     opacity: 0;
     transition: opacity 0.5s ease;
 }
-

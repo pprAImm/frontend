@@ -6,8 +6,8 @@
 }
 
 body {
-    background: #180b0b;
-    color: #ddb7b7;
+    background: #121320;
+    color: #f0f0f0;
     overflow-x: hidden;
     animation: fadeInCentral 0.4s ease-out;
 }
@@ -36,29 +36,39 @@ body {
     gap: 24px;
     padding: 20px 0 24px 0;
     flex-wrap: wrap;
-    border-bottom: 1px solid #ecdada14;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     margin-bottom: 32px;
 }
 
 .user-greeting {
-    background: rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(4px);
     padding: 8px 20px;
-    border-radius: 40px;
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: 0.3px;
+    border-radius: 28px;
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 1;
+    letter-spacing: 0.5px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     white-space: nowrap;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0), #15161e;
+    background-clip: text, border-box;
+    -webkit-background-clip: text, border-box;
+    color: transparent;
 }
 
 .user-greeting::before {
-    content: "👤";
-    font-size: 1.2rem;
-    opacity: 0.9;
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #ff5fa3, #8b3df0);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center;
+    mask-size: contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center;
+    -webkit-mask-size: contain;
+    flex-shrink: 0;
 }
 
 /* поисковая строка (длинное поле) */
@@ -69,8 +79,8 @@ body {
 
 .search-input {
     width: 100%;
-    background: #1e1f25;
-    border: 1px solid #2c2e3a;
+    background: #15161e;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 56px;
     padding: 14px 24px;
     font-size: 1rem;
@@ -78,24 +88,22 @@ body {
     transition: all 0.2s ease;
     outline: none;
     font-weight: 400;
-    backdrop-filter: blur(4px);
 }
 
 .search-input::placeholder {
-    color: #888c9e;
+    color: rgba(255, 255, 255, 0.35);
     font-weight: 400;
     letter-spacing: -0.2px;
 }
 
 .search-input:focus {
-    border-color: #5a6eff;
-    background: #14151c;
-    box-shadow: 0 0 0 3px rgba(90, 110, 255, 0.2);
+    border-color: #8b5cf6;
+    background: #1c1d2b;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
 }
 
-/* иконка приложения (логотип) - НЕ ИНТЕРАКТИВНАЯ */
 .logo-icon {
-    background: #1c1e26;
+    background: #15161e;
     border-radius: 28px;
     padding: 8px 18px;
     display: flex;
@@ -103,30 +111,32 @@ body {
     gap: 10px;
     font-weight: 700;
     font-size: 1.4rem;
+    line-height: 1;
     letter-spacing: -0.5px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     white-space: nowrap;
 }
 
 .logo-icon img {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
 .logo-text {
-    background: linear-gradient(135deg, #ffffff, #b9c3ff);
+    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+    font-weight: 800;
+    letter-spacing: 0.5px;
 }
 
-/* ===== БАННЕР (НЕ ИНТЕРАКТИВНЫЙ) ===== */
+/* ===== БАННЕР ===== */
 .hero-banner {
     width: 100%;
-    margin-bottom: 48px;
+    max-width: 1600px;
+    margin: 0 auto 48px;
     border-radius: 28px;
     overflow: hidden;
     box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
@@ -137,9 +147,10 @@ body {
     height: auto;
     display: block;
     object-fit: cover;
+    max-height: 400px;
 }
 
-/* ===== СЕКЦИЯ КАТЕГОРИЙ (прокрутка) ===== */
+/* ===== СЕКЦИЯ КАТЕГОРИЙ ===== */
 .categories-section {
     margin-top: 8px;
     margin-bottom: 48px;
@@ -157,7 +168,7 @@ body {
     font-size: 1.7rem;
     font-weight: 600;
     letter-spacing: -0.3px;
-    background: linear-gradient(120deg, #f0f3ff, #b9c3ff);
+    background: linear-gradient(120deg, #ff5fa3, #8b3df0);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -170,7 +181,7 @@ body {
 }
 
 .scroll-btn {
-    background: #1e1f2a;
+    background: #15161e;
     border: none;
     width: 42px;
     height: 42px;
@@ -180,30 +191,30 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    color: #eef2ff;
+    color: #d0c0ff;
     font-size: 1.6rem;
     font-weight: 500;
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .scroll-btn:hover {
-    background: #2d2f3e;
+    background: #1c1d2b;
     transform: scale(1.02);
-    border-color: #5a6eff66;
+    border-color: rgba(139, 92, 246, 0.4);
 }
 
 .scroll-btn:active {
     transform: scale(0.96);
 }
 
-/* контейнер с прокруткой (горизонтальный скролл) */
+/* контейнер с прокруткой */
 .categories-track {
     overflow-x: auto;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: #5a6eff #282b36;
+    scrollbar-color: #8b5cf6 #1c1d2b;
     border-radius: 28px;
 }
 
@@ -212,12 +223,12 @@ body {
 }
 
 .categories-track::-webkit-scrollbar-track {
-    background: #17181f;
+    background: #15161e;
     border-radius: 12px;
 }
 
 .categories-track::-webkit-scrollbar-thumb {
-    background: #5a6eff;
+    background: #8b5cf6;
     border-radius: 12px;
 }
 
@@ -227,7 +238,6 @@ body {
     padding: 6px 4px 20px 4px;
 }
 
-/* карточка категории */
 .category-card {
     position: relative;
     width: 220px;
@@ -236,7 +246,7 @@ body {
     border-radius: 24px;
     cursor: pointer;
     overflow: hidden;
-    background: linear-gradient(135deg, #1a1c2e, #2a1e3c, #1c2440);
+    background: linear-gradient(135deg, #1c1d2b, #2a1e3c, #15161e);
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -244,7 +254,7 @@ body {
 
 .category-card:hover {
     transform: translateY(-6px);
-    border-color: #5a6eff66;
+    border-color: rgba(139, 92, 246, 0.4);
     box-shadow: 0 20px 25px -15px rgba(0, 0, 0, 0.6);
 }
 
@@ -267,7 +277,7 @@ body {
     margin-bottom: 40px;
     padding: 28px 30px;
     border-radius: 28px;
-    background: linear-gradient(180deg, rgba(29, 32, 51, 0.24), rgba(19, 20, 34, 0.92));
+    background: linear-gradient(180deg, rgba(28, 29, 43, 0.24), rgba(21, 22, 30, 0.92));
     border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
 }
@@ -283,8 +293,8 @@ body {
     justify-content: center;
     padding: 10px 18px;
     border-radius: 999px;
-    background: rgba(90, 110, 255, 0.13);
-    color: #dfe8ff;
+    background: rgba(139, 92, 246, 0.12);
+    color: #d0c0ff;
     font-size: 0.92rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -301,7 +311,7 @@ body {
 .category-hero p,
 .movie-detail-info p {
     max-width: 760px;
-    color: #d4d4e8;
+    color: rgba(255, 255, 255, 0.65);
     line-height: 1.75;
     font-size: 1rem;
 }
@@ -323,7 +333,7 @@ body {
 }
 
 .movie-card {
-    background: #111217;
+    background: #15161e;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 26px;
     overflow: hidden;
@@ -355,12 +365,12 @@ body {
 .movie-title {
     font-size: 1.1rem;
     margin-bottom: 6px;
-    color: #f4f4ff;
+    color: #f0f0f0;
 }
 
 .movie-desc {
     font-size: 0.9rem;
-    color: #9499b8;
+    color: rgba(255, 255, 255, 0.5);
     line-height: 1.5;
     margin-bottom: 10px;
 }
@@ -369,15 +379,14 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #aab1d6;
+    color: rgba(255, 255, 255, 0.5);
     font-weight: 500;
 }
 
 .movie-rating span {
-    color: #eef7ff;
+    color: #d0c0ff;
 }
 
-/* Keep 2 cards per row even on smaller screens; expand to 4 on large desktops */
 .movie-detail-page {
     padding: 20px 0 60px;
 }
@@ -389,7 +398,7 @@ body {
     align-items: start;
     padding: 32px;
     border-radius: 28px;
-    background: rgba(14, 16, 26, 0.95);
+    background: rgba(21, 22, 30, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.07);
     box-shadow: 0 26px 45px rgba(0, 0, 0, 0.28);
 }
@@ -419,7 +428,7 @@ body {
     justify-content: center;
     padding: 14px 22px;
     border-radius: 999px;
-    background: #5a6eff;
+    background: #8b5cf6;
     color: #fff;
     text-decoration: none;
     font-weight: 600;
@@ -428,12 +437,12 @@ body {
 
 .button:hover {
     transform: translateY(-1px);
-    background: #7486ff;
+    background: #9b6cf7;
 }
 
 .button-secondary {
     background: rgba(255, 255, 255, 0.08);
-    color: #eef2ff;
+    color: #d0c0ff;
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -456,8 +465,8 @@ body {
     align-items: center;
     padding: 16px 18px;
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(21, 22, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .episode-number {
@@ -467,18 +476,18 @@ body {
     min-width: 42px;
     height: 42px;
     border-radius: 14px;
-    background: #1f2140;
-    color: #c9d0ff;
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
     font-weight: 700;
 }
 
 .episode-title {
-    color: #eef2ff;
+    color: #f0f0f0;
     font-weight: 600;
 }
 
 .episode-duration {
-    color: #9ba1c4;
+    color: rgba(255, 255, 255, 0.45);
     text-align: right;
     font-size: 0.95rem;
 }
@@ -494,8 +503,6 @@ body {
     }
 }
 
-
-/* адаптивность для планшетов и мобильных */
 @media (max-width: 780px) {
     .app-container {
         padding: 0 20px 48px 20px;
@@ -549,8 +556,8 @@ body {
 
 .profile-card,
 .profile-logout-card {
-    background: #111217;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #15161e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 28px;
     padding: 28px;
     box-shadow: 0 18px 32px rgba(0, 0, 0, 0.18);
@@ -559,13 +566,13 @@ body {
 .profile-card h3,
 .profile-logout-card h3 {
     margin-bottom: 18px;
-    color: #f4f4ff;
+    color: #f0f0f0;
 }
 
 .profile-card label {
     display: block;
     margin-bottom: 10px;
-    color: #bfc4d7;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.95rem;
     font-weight: 500;
 }
@@ -574,9 +581,9 @@ body {
     width: 100%;
     padding: 14px 16px;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: #171924;
-    color: #f3f5ff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #1c1d2b;
+    color: #f0f0f0;
     margin-bottom: 18px;
 }
 
@@ -592,7 +599,7 @@ body {
 }
 
 .profile-logout-card p {
-    color: #b3b9d6;
+    color: rgba(255, 255, 255, 0.5);
     line-height: 1.7;
 }
 
@@ -602,9 +609,198 @@ body {
     }
 }
 
-/* ===== CATEGORIES FLEX (horizontal scroll) ===== */
+/* ===== PROFILE HERO ===== */
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 40px;
+    background: #15161e;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 28px;
+    padding: 32px 36px;
+}
 
-/* ===== SERIES GRID (главная + поиск) ===== */
+.profile-hero-avatar {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6, #3b9eff);
+    border-radius: 50%;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.profile-hero-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-hero-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.profile-hero-email {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== MY SERIES SECTION ===== */
+.my-series-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 20px;
+    background: linear-gradient(120deg, #ff5fa3, #8b3df0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.my-series-track {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #8b5cf6 #1c1d2b;
+    border-radius: 28px;
+    margin-bottom: 48px;
+}
+
+.my-series-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.my-series-track::-webkit-scrollbar-track {
+    background: #15161e;
+    border-radius: 12px;
+}
+
+.my-series-track::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 12px;
+}
+
+.my-series-flex {
+    display: flex;
+    gap: 18px;
+    padding: 6px 4px 20px 4px;
+}
+
+.my-series-card {
+    flex: 0 0 auto;
+    width: 170px;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #15161e;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.my-series-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 20px 25px -15px rgba(0, 0, 0, 0.6);
+}
+
+.my-series-card-img {
+    width: 100%;
+    aspect-ratio: 2 / 1.2;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.my-series-card:hover .my-series-card-img {
+    transform: scale(1.03);
+}
+
+.my-series-card-label {
+    padding: 10px 14px 14px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    color: #f0f0f0;
+}
+
+.my-series-add {
+    flex: 0 0 auto;
+    width: 170px;
+    border-radius: 20px;
+    cursor: pointer;
+    background: #15161e;
+    overflow: hidden;
+    border: 1px dashed rgba(139, 92, 246, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.my-series-add:hover {
+    transform: translateY(-6px);
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 20px 25px -15px rgba(0, 0, 0, 0.6);
+    background: #1c1d2b;
+}
+
+.my-series-add .add-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #8b5cf6, #3b9eff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.my-series-add .add-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 780px) {
+    .profile-hero {
+        padding: 24px 20px;
+        gap: 20px;
+    }
+    .profile-hero-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    .profile-hero-name {
+        font-size: 1.4rem;
+    }
+    .my-series-card,
+    .my-series-add {
+        width: 140px;
+    }
+}
+
+@media (max-width: 560px) {
+    .my-series-card,
+    .my-series-add {
+        width: 120px;
+    }
+    .my-series-flex {
+        gap: 12px;
+    }
+}
 
 .series-grid {
     display: grid;
@@ -614,7 +810,7 @@ body {
 }
 
 .series-card {
-    background: #111217;
+    background: #15161e;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 26px;
     overflow: hidden;
@@ -641,13 +837,13 @@ body {
 .series-card .title {
     font-size: 14px;
     font-weight: 600;
-    color: #f4f4ff;
+    color: #f0f0f0;
     margin-bottom: 4px;
 }
 
 .series-card .desc {
     font-size: 12px;
-    color: #9499b8;
+    color: rgba(255, 255, 255, 0.5);
     line-height: 1.4;
     margin-bottom: 6px;
     display: -webkit-box;
@@ -658,10 +854,8 @@ body {
 
 .series-card .rating {
     font-size: 13px;
-    color: #f1c40f;
+    color: #ff5fa3;
 }
-
-/* ===== SEARCH PAGE ===== */
 
 .search-section {
     margin-top: 8px;
@@ -669,7 +863,7 @@ body {
 }
 
 .results-count {
-    color: #aab1d6;
+    color: rgba(255, 255, 255, 0.5);
     margin-bottom: 20px;
     font-size: 1rem;
 }
@@ -677,9 +871,9 @@ body {
 .no-results {
     text-align: center;
     padding: 60px 40px;
-    color: #888c9e;
+    color: rgba(255, 255, 255, 0.35);
     font-size: 1.1rem;
-    background: #111217;
+    background: #15161e;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 28px;
 }
@@ -687,13 +881,13 @@ body {
 .loading {
     text-align: center;
     padding: 60px 40px;
-    color: #888c9e;
+    color: rgba(255, 255, 255, 0.35);
     font-size: 1.1rem;
 }
 
 .search-btn-large {
     padding: 14px 24px;
-    background: #5a6eff;
+    background: #8b5cf6;
     color: white;
     border: none;
     border-radius: 56px;
@@ -705,5 +899,5 @@ body {
 }
 
 .search-btn-large:hover {
-    background: #7486ff;
+    background: #9b6cf7;
 }

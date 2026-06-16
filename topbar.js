@@ -3,7 +3,7 @@
 
     function setUserName(name) {
         const el = document.getElementById('userNameDisplay');
-        if (el) el.textContent = `👤 ${name}`;
+        if (el) el.textContent = name || 'guest';
     }
 
     // Try localStorage first (fast, set during login)
@@ -25,6 +25,7 @@
                 localStorage.setItem('prAIm_user', JSON.stringify({ username: user.username }));
             } else {
                 localStorage.removeItem('prAIm_user');
+                setUserName('guest');
             }
         } catch (_) {}
     })();
