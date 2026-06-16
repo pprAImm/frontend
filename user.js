@@ -28,7 +28,7 @@
         const addCard = document.createElement('div');
         addCard.className = 'my-series-add';
         addCard.addEventListener('click', function() {
-            window.location.href = 'start.html';
+            window.location.href = 'create.html';
         });
         const addIcon = document.createElement('div');
         addIcon.className = 'add-icon';
@@ -49,7 +49,7 @@
                     const card = document.createElement('div');
                     card.className = 'my-series-card';
                     card.addEventListener('click', function() {
-                        window.location.href = `series.html?id=${s.id}`;
+                        window.location.href = `create.html?id=${s.id}`;
                     });
 
                     const img = document.createElement('img');

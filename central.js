@@ -104,8 +104,7 @@ async function loadRecommendedSeries() {
 
 // Load categories and series
 async function checkAuthentication() {
-    await loadCategories();
-    await loadRecommendedSeries();
+    await Promise.all([loadCategories(), loadRecommendedSeries()]);
 }
 
 // Logout function
@@ -175,9 +174,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            trackElement.scrollBy({ left: -scrollAmount });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            trackElement.scrollBy({ left: scrollAmount });
         }
     }
 
@@ -186,9 +185,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            trackElement.scrollBy({ left: -scrollAmount });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            trackElement.scrollBy({ left: scrollAmount });
         }
     }
 
@@ -271,12 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const catRight = document.getElementById('catScrollRight');
         if (track && catLeft) {
             catLeft.addEventListener('click', () => {
-                track.scrollBy({ left: -300, behavior: 'smooth' });
+                track.scrollBy({ left: -300 });
             });
         }
         if (track && catRight) {
             catRight.addEventListener('click', () => {
-                track.scrollBy({ left: 300, behavior: 'smooth' });
+                track.scrollBy({ left: 300 });
             });
         }
     } else {

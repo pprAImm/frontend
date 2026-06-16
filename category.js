@@ -51,7 +51,7 @@
                     document.title = `${cat.name} — prAIm`;
                     document.getElementById('categoryTitle').textContent = cat.name;
                     document.getElementById('categoryDescription').textContent = cat.description || '';
-                    document.getElementById('categoryBadge').textContent = cat.name || 'Категория';
+                    document.getElementById('categoryBadge').textContent = 'Категория';
                 }
 
                 const series = data.series || [];
