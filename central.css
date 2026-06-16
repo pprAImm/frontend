@@ -41,28 +41,28 @@ body {
 }
 
 .user-greeting {
-    padding: 8px 20px;
+    background: #15161e;
+    padding: 8px 18px;
     border-radius: 28px;
     font-weight: 800;
-    font-size: 1.4rem;
-    line-height: 1;
+    font-size: 1rem;
     letter-spacing: 0.5px;
     display: inline-flex;
     align-items: center;
     gap: 10px;
     white-space: nowrap;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0), #15161e;
-    background-clip: text, border-box;
-    -webkit-background-clip: text, border-box;
+    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0);
+    background-clip: text;
+    -webkit-background-clip: text;
     color: transparent;
 }
 
 .user-greeting::before {
     content: "";
     display: inline-block;
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     background: linear-gradient(135deg, #ff5fa3, #8b3df0);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center;
     mask-size: contain;
@@ -111,7 +111,6 @@ body {
     gap: 10px;
     font-weight: 700;
     font-size: 1.4rem;
-    line-height: 1;
     letter-spacing: -0.5px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     white-space: nowrap;
@@ -606,199 +605,6 @@ body {
 @media (max-width: 900px) {
     .profile-grid {
         grid-template-columns: 1fr;
-    }
-}
-
-/* ===== PROFILE HERO ===== */
-.profile-hero {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    margin-bottom: 40px;
-    background: #15161e;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 28px;
-    padding: 32px 36px;
-}
-
-.profile-hero-avatar {
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #8b5cf6, #3b9eff);
-    border-radius: 50%;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.profile-hero-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.profile-hero-name {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    background: linear-gradient(135deg, #ff5fa3, #ff2e93, #8b3df0);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.profile-hero-email {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* ===== MY SERIES SECTION ===== */
-.my-series-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    margin-bottom: 20px;
-    background: linear-gradient(120deg, #ff5fa3, #8b3df0);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.my-series-track {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: #8b5cf6 #1c1d2b;
-    border-radius: 28px;
-    margin-bottom: 48px;
-}
-
-.my-series-track::-webkit-scrollbar {
-    height: 6px;
-}
-
-.my-series-track::-webkit-scrollbar-track {
-    background: #15161e;
-    border-radius: 12px;
-}
-
-.my-series-track::-webkit-scrollbar-thumb {
-    background: #8b5cf6;
-    border-radius: 12px;
-}
-
-.my-series-flex {
-    display: flex;
-    gap: 18px;
-    padding: 6px 4px 20px 4px;
-}
-
-.my-series-card {
-    flex: 0 0 auto;
-    width: 170px;
-    border-radius: 20px;
-    cursor: pointer;
-    background: #15161e;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.my-series-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(139, 92, 246, 0.4);
-    box-shadow: 0 20px 25px -15px rgba(0, 0, 0, 0.6);
-}
-
-.my-series-card-img {
-    width: 100%;
-    aspect-ratio: 2 / 1.2;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s;
-}
-
-.my-series-card:hover .my-series-card-img {
-    transform: scale(1.03);
-}
-
-.my-series-card-label {
-    padding: 10px 14px 14px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-align: center;
-    color: #f0f0f0;
-}
-
-.my-series-add {
-    flex: 0 0 auto;
-    width: 170px;
-    border-radius: 20px;
-    cursor: pointer;
-    background: #15161e;
-    overflow: hidden;
-    border: 1px dashed rgba(139, 92, 246, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 160px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.my-series-add:hover {
-    transform: translateY(-6px);
-    border-color: rgba(139, 92, 246, 0.6);
-    box-shadow: 0 20px 25px -15px rgba(0, 0, 0, 0.6);
-    background: #1c1d2b;
-}
-
-.my-series-add .add-icon {
-    font-size: 2.5rem;
-    background: linear-gradient(135deg, #8b5cf6, #3b9eff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    line-height: 1;
-    margin-bottom: 6px;
-}
-
-.my-series-add .add-label {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-@media (max-width: 780px) {
-    .profile-hero {
-        padding: 24px 20px;
-        gap: 20px;
-    }
-    .profile-hero-avatar {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-    }
-    .profile-hero-name {
-        font-size: 1.4rem;
-    }
-    .my-series-card,
-    .my-series-add {
-        width: 140px;
-    }
-}
-
-@media (max-width: 560px) {
-    .my-series-card,
-    .my-series-add {
-        width: 120px;
-    }
-    .my-series-flex {
-        gap: 12px;
     }
 }
 
