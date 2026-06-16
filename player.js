@@ -48,11 +48,24 @@
                 if (ep) {
                     episodeId = ep.id;
                     playerTitle.textContent = `${s.title} — Серия ${ep.episode_num || ''}: ${ep.title || ''}`;
-                    const videoUrl = ep.video_url;
+                    const videoUrl = ep.tiktok_url;
                     if (videoUrl) {
                         const src = videoUrl.startsWith('http') ? videoUrl : `${API_BASE}${videoUrl}`;
-                        video.src = src;
-                        video.load();
+                        if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                            var hls = new Hls();
+                            hls.loadSource(src);
+                            hls.attachMedia(video);
+                            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                                video.play().catch(function() {});
+                            });
+                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                            video.src = src;
+                            video.load();
+                        } else {
+                            video.style.display = 'none';
+                            playerError.style.display = 'flex';
+                            return;
+                        }
                         playerError.style.display = 'none';
                         video.style.display = '';
                     } else {
