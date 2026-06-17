@@ -141,20 +141,45 @@
     const nameInput = document.getElementById('profileName');
 
     if (nameForm) {
-        nameForm.addEventListener('submit', (event) => {
+        nameForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const newName = nameInput.value.trim();
             if (!newName) {
                 alert('Введите имя пользователя.');
                 return;
             }
-            alert(`Имя пользователя изменено на «${newName}».`);
-            nameInput.value = '';
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/me/username`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ username: newName }),
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.error || 'Ошибка обновления имени');
+                    return;
+                }
+                const data = await res.json();
+                // Обновляем localStorage
+                const cached = JSON.parse(localStorage.getItem('prAIm_user') || '{}');
+                cached.username = data.username;
+                localStorage.setItem('prAIm_user', JSON.stringify(cached));
+                // Обновляем отображение
+                const nameEl = document.getElementById('profileUserName');
+                if (nameEl) nameEl.textContent = data.username;
+                const avatarEl = document.getElementById('profileAvatar');
+                if (avatarEl) avatarEl.textContent = data.username.charAt(0).toUpperCase();
+                alert('Имя пользователя изменено.');
+                nameInput.value = '';
+            } catch (_) {
+                alert('Ошибка сервера. Проверьте подключение.');
+            }
         });
     }
 
     if (passwordForm) {
-        passwordForm.addEventListener('submit', (event) => {
+        passwordForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const currentPassword = document.getElementById('currentPassword').value.trim();
             const newPassword = document.getElementById('newPassword').value.trim();
@@ -168,8 +193,26 @@
                 alert('Пароли не совпадают.');
                 return;
             }
-            alert('Пароль успешно изменён.');
-            passwordForm.reset();
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/me/password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                    }),
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.error || 'Ошибка смены пароля');
+                    return;
+                }
+                alert('Пароль успешно изменён.');
+                passwordForm.reset();
+            } catch (_) {
+                alert('Ошибка сервера. Проверьте подключение.');
+            }
         });
     }
 
