@@ -64,7 +64,15 @@ async function loadRecommendedSeries() {
         if (!container) return;
 
         container.innerHTML = '';
-        series.slice(0, 8).forEach(s => {
+        const top8 = series.slice(0, 8);
+
+        const ratings = await Promise.all(top8.map(s =>
+            fetch(`${API_BASE}/api/series/${s.id}`, { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null)
+        ));
+
+        top8.forEach((s, i) => {
             const card = document.createElement('div');
             card.className = 'series-card';
             card.onclick = () => window.location.href = `series.html?id=${s.id}`;
@@ -86,9 +94,11 @@ async function loadRecommendedSeries() {
             desc.className = 'desc';
             desc.textContent = s.description || '';
 
+            const ratingVal = ratings[i]?.series?.average_rating ?? null;
+
             const rating = document.createElement('div');
             rating.className = 'rating';
-            rating.innerHTML = `Рейтинг: <span>${s.average_rating ?? '-'}</span>`;
+            rating.innerHTML = `Рейтинг: <span>${ratingVal ?? '-'}</span>`;
 
             info.appendChild(title);
             info.appendChild(desc);
@@ -250,19 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newContainer) {
         // Use new functions for new structure
         checkAuthentication();
-
-        // Setup global search if exists
-        const globalSearch = document.getElementById('globalSearch');
-        if (globalSearch) {
-            globalSearch.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const query = globalSearch.value.trim();
-                    if (query) {
-                        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-                    }
-                }
-            });
-        }
 
         // Scroll controls for categories
         const track = document.getElementById('categoriesTrack');

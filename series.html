@@ -23,59 +23,39 @@
         </div>
     </div>
 
-    <h1 class="series-title">Name</h1>
-
-    <div class="series-banner">
-        <img src="assets/images/add.png" alt="Превью сериала" onerror="this.onerror=null; this.src='https://placehold.co/1600x600/1f2a48/white?text=Превью';">
-    </div>
-
-    <div class="series-info">
-        <div class="series-rating">
-            <span class="rating-label">Рейтинг:</span>
-            <span class="rating-value" id="ratingValue">—</span>
+    <div class="series-layout">
+        <div class="series-left">
+            <img class="series-cover" id="seriesCover" src="assets/images/add.png" alt="Обложка">
+            <h1 class="series-title" id="seriesTitle">Name</h1>
+            <div class="series-categories" id="seriesCategories"></div>
+            <p class="series-description" id="seriesDescription"></p>
+            <div class="series-rating-block">
+                <div class="series-rating">
+                    <span class="rating-label">Рейтинг:</span>
+                    <span class="rating-value" id="ratingValue">—</span>
+                </div>
+                <div class="rate-section">
+                    <span class="rate-label">Оценить:</span>
+                    <div class="rate-stars" id="rateStars">
+                        <button class="star" data-score="10">★</button>
+                        <button class="star" data-score="9">★</button>
+                        <button class="star" data-score="8">★</button>
+                        <button class="star" data-score="7">★</button>
+                        <button class="star" data-score="6">★</button>
+                        <button class="star" data-score="5">★</button>
+                        <button class="star" data-score="4">★</button>
+                        <button class="star" data-score="3">★</button>
+                        <button class="star" data-score="2">★</button>
+                        <button class="star" data-score="1">★</button>
+                    </div>
+                    <span class="rating-feedback hidden" id="ratingFeedback"></span>
+                </div>
+            </div>
         </div>
-        <div class="rate-section">
-            <span class="rate-label">Оценить:</span>
-            <div class="rate-stars" id="rateStars">
-                <button class="star" data-score="10">★</button>
-                <button class="star" data-score="9">★</button>
-                <button class="star" data-score="8">★</button>
-                <button class="star" data-score="7">★</button>
-                <button class="star" data-score="6">★</button>
-                <button class="star" data-score="5">★</button>
-                <button class="star" data-score="4">★</button>
-                <button class="star" data-score="3">★</button>
-                <button class="star" data-score="2">★</button>
-                <button class="star" data-score="1">★</button>
-            </div>
-            <span class="rating-feedback hidden" id="ratingFeedback"></span>
-        </div>
-        <p class="series-description" id="seriesDescription">
-        </p>
-    </div>
-
-    <div class="episodes-section">
-        <h2 class="section-title">Эпизоды</h2>
-        <div class="episodes-list" id="episodesList">
-            <div class="episode-card" data-episode="1">
-                <span class="episode-number">Серия 1</span>
-                <span class="episode-title">Пилотная серия</span>
-            </div>
-            <div class="episode-card" data-episode="2">
-                <span class="episode-number">Серия 2</span>
-                <span class="episode-title">Новая глава</span>
-            </div>
-            <div class="episode-card" data-episode="3">
-                <span class="episode-number">Серия 3</span>
-                <span class="episode-title">Неожиданный поворот</span>
-            </div>
-            <div class="episode-card" data-episode="4">
-                <span class="episode-number">Серия 4</span>
-                <span class="episode-title">На пути к истине</span>
-            </div>
-            <div class="episode-card" data-episode="5">
-                <span class="episode-number">Серия 5</span>
-                <span class="episode-title">Финал сезона</span>
+        <div class="series-right">
+            <div class="episodes-panel">
+                <h2 class="section-title">Эпизоды</h2>
+                <div class="episodes-list" id="episodesList"></div>
             </div>
         </div>
     </div>
