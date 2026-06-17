@@ -53,4 +53,16 @@
             window.location.href = authed ? 'user.html' : 'registration.html';
         });
     }
+
+    const searchInput = document.getElementById('globalSearch');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+    }
 })();

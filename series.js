@@ -4,8 +4,9 @@
     const addCommentBtn = document.getElementById('addCommentBtn');
     const commentInput = document.getElementById('commentInput');
     const commentsList = document.getElementById('commentsList');
-    const titleEl = document.querySelector('.series-title');
-    const bannerImg = document.querySelector('.series-banner img');
+    const titleEl = document.getElementById('seriesTitle');
+    const coverImg = document.getElementById('seriesCover');
+    const categoriesEl = document.getElementById('seriesCategories');
     const descEl = document.getElementById('seriesDescription');
     const ratingValue = document.getElementById('ratingValue');
     const rateStars = document.getElementById('rateStars');
@@ -24,7 +25,7 @@
         const card = document.createElement('div');
         card.className = 'episode-card';
         card.dataset.episode = ep.id;
-        card.innerHTML = `<span class="episode-number">Серия ${ep.episode_num ?? ''}</span><span class="episode-title">${ep.title ?? ''}</span>`;
+        card.innerHTML = `<span class="episode-title">${ep.title ?? ''}</span>`;
         card.addEventListener('click', function() {
             window.location.href = `player.html?seriesId=${id}&episodeId=${ep.id}`;
         });
@@ -62,8 +63,17 @@
 
             titleEl.textContent = s.title || 'Сериал';
             descEl.textContent = s.description || '';
-            if (s.cover_url) bannerImg.src = s.cover_url;
+            if (s.cover_url) coverImg.src = s.cover_url;
             ratingValue.textContent = (s.average_rating != null) ? `${s.average_rating} / 10` : '—';
+
+            if (s.categories && s.categories.length) {
+                s.categories.forEach(cat => {
+                    const chip = document.createElement('span');
+                    chip.className = 'series-category-chip';
+                    chip.textContent = cat.name || cat.slug || cat;
+                    categoriesEl.appendChild(chip);
+                });
+            }
 
             if (s.average_rating != null) {
                 setStars(Math.round(s.average_rating));
@@ -101,7 +111,6 @@
                     ratingFeedback.textContent = `Ваша оценка: ${score}`;
                     ratingFeedback.classList.remove('hidden');
                 }
-                // Reload average rating
                 const ratingRes = await fetch(`${API_BASE}/api/series/${id}/rating`, { credentials: 'include' });
                 if (ratingRes.ok) {
                     const ratingData = await ratingRes.json();
@@ -131,7 +140,6 @@
 
     loadComments();
 
-    // Submit comment from textarea
     if (addCommentBtn) {
         addCommentBtn.addEventListener('click', async function(e) {
             e.preventDefault();
@@ -161,7 +169,6 @@
         });
     }
 
-    // Ctrl+Enter to submit comment
     if (commentInput) {
         commentInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -188,4 +195,4 @@
             }
         });
     }
-})(); 
+})();
