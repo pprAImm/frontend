@@ -16,7 +16,6 @@
     const editId = params.get('id') ? parseInt(params.get('id'), 10) : null;
 
     let coverFile = null;
-    let coverUrl = null;
     let selectedCategories = new Set();
     let episodeCount = 0;
 
@@ -26,7 +25,6 @@
         const file = this.files[0];
         if (!file) return;
         coverFile = file;
-        coverUrl = null;
         const reader = new FileReader();
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
@@ -66,7 +64,6 @@
                         titleInput.value = s.title || '';
                         descInput.value = s.description || '';
                         if (s.cover_url) {
-                            coverUrl = s.cover_url;
                             imagePreview.src = s.cover_url;
                             imagePreview.style.display = 'block';
                             imagePlaceholder.style.display = 'none';
@@ -85,9 +82,10 @@
                             episodeCount++;
                             const row = createEpisodeRow();
                             row.querySelector('.episode-title-input').value = ep.title || '';
-                            row.querySelector('.episode-video-btn').textContent = '✓ видео загружено';
-                            row.querySelector('.episode-video-btn').classList.add('has-video');
-                            row.dataset.hasExistingVideo = 'true';
+                            row.dataset.episodeId = ep.id;
+                            const btn = row.querySelector('.episode-video-btn');
+                            btn.textContent = ep.tiktok_url ? '✓ видео загружено' : 'добавьте видео';
+                            if (ep.tiktok_url) btn.classList.add('has-video');
                             episodesList.appendChild(row);
                         });
                         publishBtn.textContent = 'Сохранить';
@@ -127,7 +125,6 @@
             videoFile = file;
             videoBtn.textContent = `✓ видео (${file.name.length > 20 ? file.name.slice(0, 17) + '...' : file.name})`;
             videoBtn.classList.add('has-video');
-            row.dataset.hasExistingVideo = 'false';
         });
 
         const titleInputEp = document.createElement('input');
@@ -160,7 +157,7 @@
         const title = titleInput.value.trim();
         const description = descInput.value.trim();
 
-        if (!coverFile && !coverUrl) {
+        if (!coverFile) {
             alert('Загрузите обложку сериала');
             return;
         }
@@ -187,8 +184,14 @@
             const videoInput = row.querySelector('input[type="file"]');
             const epTitle = titleInput.value.trim();
 
-            if (!editId && !videoInput.files[0]) {
-                alert('Загрузите видео для каждой серии');
+            if (row.dataset.episodeId) {
+                // Existing episode — skip upload
+                episodes.push({ title: epTitle, file: null, existing: true });
+                continue;
+            }
+
+            if (!videoInput.files[0]) {
+                alert('Загрузите видео для каждой новой серии');
                 return;
             }
 
@@ -199,43 +202,71 @@
 
             episodes.push({
                 title: epTitle,
-                file: videoInput.files[0] || null
+                file: videoInput.files[0],
+                existing: false,
             });
         }
 
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
-        if (coverFile) {
-            formData.append('cover', coverFile);
-        } else if (coverUrl) {
-            formData.append('cover_url', coverUrl);
-        }
-        formData.append('episodes', JSON.stringify(episodes.map(e => ({ title: e.title }))));
-        episodes.forEach((ep, i) => {
-            if (ep.file) {
-                formData.append(`episode_video_${i}`, ep.file);
-            }
-        });
+        publishBtn.disabled = true;
+        publishBtn.textContent = 'Создаём сериал...';
 
         try {
-            const url = editId ? `${API_BASE}/api/series/${editId}` : `${API_BASE}/api/series`;
-            const method = editId ? 'PUT' : 'POST';
-            const resp = await fetch(url, {
-                method,
+            // Step 1: Create series with metadata + cover
+            const metaForm = new FormData();
+            metaForm.append('title', title);
+            metaForm.append('description', description);
+            metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+            metaForm.append('cover', coverFile);
+
+            const metaResp = await fetch(`${API_BASE}/api/series`, {
+                method: 'POST',
                 credentials: 'include',
-                body: formData
+                body: metaForm,
             });
-            if (!resp.ok) {
-                const err = await resp.json().catch(() => ({}));
-                alert(err.error || 'Ошибка при сохранении сериала');
+
+            if (!metaResp.ok) {
+                const err = await metaResp.json().catch(() => ({}));
+                alert(err.error || 'Ошибка при создании сериала');
+                publishBtn.disabled = false;
+                publishBtn.textContent = editId ? 'Сохранить' : 'Выложить';
                 return;
             }
-            const data = await resp.json();
-            window.location.href = `series.html?id=${data.id}`;
+
+            const metaData = await metaResp.json();
+            const seriesId = metaData.id;
+
+            // Step 2: Upload each episode video to streaming-service
+            const newEpisodes = episodes.filter(ep => !ep.existing);
+            for (let i = 0; i < newEpisodes.length; i++) {
+                const ep = newEpisodes[i];
+                publishBtn.textContent = `Загружаем видео ${i + 1}/${newEpisodes.length}...`;
+
+                const videoForm = new FormData();
+                videoForm.append('file', ep.file);
+                videoForm.append('series_id', String(seriesId));
+                videoForm.append('title', ep.title);
+                videoForm.append('episode_num', String(i + 1));
+
+                const videoResp = await fetch(`/upload`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: videoForm,
+                });
+
+                if (!videoResp.ok) {
+                    const errText = await videoResp.text();
+                    alert(`Ошибка загрузки видео "${ep.title}": ${errText}`);
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = editId ? 'Сохранить' : 'Выложить';
+                    return;
+                }
+            }
+
+            window.location.href = `series.html?id=${seriesId}`;
         } catch (_) {
             alert('Ошибка сети при сохранении сериала');
+            publishBtn.disabled = false;
+            publishBtn.textContent = editId ? 'Сохранить' : 'Выложить';
         }
     });
 })();
