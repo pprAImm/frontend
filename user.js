@@ -6,6 +6,7 @@
         const nameEl = document.getElementById('profileUserName');
         const emailEl = document.getElementById('profileUserEmail');
         const avatarEl = document.getElementById('profileAvatar');
+
         try {
             const cached = localStorage.getItem('prAIm_user');
             if (cached) {
@@ -14,11 +15,32 @@
                     nameEl.textContent = data.username;
                     avatarEl.textContent = data.username.charAt(0).toUpperCase();
                 }
+                if (data.email) {
+                    emailEl.textContent = data.email;
+                }
             }
         } catch (_) {}
-        if (emailEl && !emailEl.textContent.trim()) {
-            emailEl.textContent = 'guest@example.com';
-        }
+
+        fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : Promise.reject(r))
+            .then(user => {
+                if (user.username) {
+                    nameEl.textContent = user.username;
+                    avatarEl.textContent = user.username.charAt(0).toUpperCase();
+                }
+                if (user.email) {
+                    emailEl.textContent = user.email;
+                }
+                localStorage.setItem('prAIm_user', JSON.stringify({
+                    username: user.username || '',
+                    email: user.email || ''
+                }));
+            })
+            .catch(() => {
+                if (emailEl && !emailEl.textContent.trim()) {
+                    emailEl.textContent = 'guest@example.com';
+                }
+            });
     }
     loadProfile();
 
@@ -141,15 +163,38 @@
     const nameInput = document.getElementById('profileName');
 
     if (nameForm) {
-        nameForm.addEventListener('submit', (event) => {
+        nameForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const newName = nameInput.value.trim();
             if (!newName) {
                 alert('Введите имя пользователя.');
                 return;
             }
-            alert(`Имя пользователя изменено на «${newName}».`);
-            nameInput.value = '';
+            try {
+                const resp = await fetch(`${API_BASE}/api/auth/me`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: newName })
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при смене имени');
+                    return;
+                }
+                const user = await resp.json();
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: user.username || newName }));
+                const nameEl = document.getElementById('profileUserName');
+                if (nameEl) nameEl.textContent = user.username || newName;
+                const avatarEl = document.getElementById('profileAvatar');
+                if (avatarEl) avatarEl.textContent = (user.username || newName).charAt(0).toUpperCase();
+                const displayEl = document.getElementById('userNameDisplay');
+                if (displayEl) displayEl.textContent = user.username || newName;
+                nameInput.value = '';
+                alert('Имя пользователя успешно изменено.');
+            } catch (_) {
+                alert('Ошибка сети при смене имени');
+            }
         });
     }
 
