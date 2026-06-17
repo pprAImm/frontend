@@ -64,7 +64,15 @@ async function loadRecommendedSeries() {
         if (!container) return;
 
         container.innerHTML = '';
-        series.slice(0, 8).forEach(s => {
+        const top8 = series.slice(0, 8);
+
+        const ratings = await Promise.all(top8.map(s =>
+            fetch(`${API_BASE}/api/series/${s.id}`, { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null)
+        ));
+
+        top8.forEach((s, i) => {
             const card = document.createElement('div');
             card.className = 'series-card';
             card.onclick = () => window.location.href = `series.html?id=${s.id}`;
@@ -86,9 +94,11 @@ async function loadRecommendedSeries() {
             desc.className = 'desc';
             desc.textContent = s.description || '';
 
+            const ratingVal = ratings[i]?.series?.average_rating ?? null;
+
             const rating = document.createElement('div');
             rating.className = 'rating';
-            rating.textContent = `★ ${s.average_rating ?? '—'}`;
+            rating.innerHTML = `Рейтинг: <span>${ratingVal ?? '-'}</span>`;
 
             info.appendChild(title);
             info.appendChild(desc);
@@ -174,9 +184,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount });
+            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount });
+            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     }
 
@@ -185,9 +195,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount });
+            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount });
+            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     }
 
@@ -251,31 +261,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Use new functions for new structure
         checkAuthentication();
 
-        // Setup global search if exists
-        const globalSearch = document.getElementById('globalSearch');
-        if (globalSearch) {
-            globalSearch.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const query = globalSearch.value.trim();
-                    if (query) {
-                        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-                    }
-                }
-            });
-        }
-
         // Scroll controls for categories
         const track = document.getElementById('categoriesTrack');
         const catLeft = document.getElementById('catScrollLeft');
         const catRight = document.getElementById('catScrollRight');
         if (track && catLeft) {
             catLeft.addEventListener('click', () => {
-                track.scrollBy({ left: -300 });
+                track.scrollBy({ left: -300, behavior: 'smooth' });
             });
         }
         if (track && catRight) {
             catRight.addEventListener('click', () => {
-                track.scrollBy({ left: 300 });
+                track.scrollBy({ left: 300, behavior: 'smooth' });
             });
         }
     } else {

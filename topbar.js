@@ -3,7 +3,7 @@
 
     function setUserName(name) {
         const el = document.getElementById('userNameDisplay');
-        if (el) el.textContent = `👤 ${name}`;
+        if (el) el.textContent = `${name}`;
     }
 
     // Try localStorage first (fast, set during login)
@@ -22,7 +22,7 @@
             if (resp.ok) {
                 const user = await resp.json();
                 setUserName(user.username);
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: user.username }));
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: user.username, email: user.email || '' }));
             } else {
                 localStorage.removeItem('prAIm_user');
             }
@@ -51,6 +51,18 @@
                 }
             } catch (_) {}
             window.location.href = authed ? 'user.html' : 'registration.html';
+        });
+    }
+
+    const searchInput = document.getElementById('globalSearch');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                }
+            }
         });
     }
 })();

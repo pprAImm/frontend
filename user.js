@@ -6,6 +6,7 @@
         const nameEl = document.getElementById('profileUserName');
         const emailEl = document.getElementById('profileUserEmail');
         const avatarEl = document.getElementById('profileAvatar');
+
         try {
             const cached = localStorage.getItem('prAIm_user');
             if (cached) {
@@ -14,11 +15,32 @@
                     nameEl.textContent = data.username;
                     avatarEl.textContent = data.username.charAt(0).toUpperCase();
                 }
+                if (data.email) {
+                    emailEl.textContent = data.email;
+                }
             }
         } catch (_) {}
-        if (emailEl && !emailEl.textContent.trim()) {
-            emailEl.textContent = 'guest@example.com';
-        }
+
+        fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : Promise.reject(r))
+            .then(user => {
+                if (user.username) {
+                    nameEl.textContent = user.username;
+                    avatarEl.textContent = user.username.charAt(0).toUpperCase();
+                }
+                if (user.email) {
+                    emailEl.textContent = user.email;
+                }
+                localStorage.setItem('prAIm_user', JSON.stringify({
+                    username: user.username || '',
+                    email: user.email || ''
+                }));
+            })
+            .catch(() => {
+                if (emailEl && !emailEl.textContent.trim()) {
+                    emailEl.textContent = 'guest@example.com';
+                }
+            });
     }
     loadProfile();
 
@@ -42,7 +64,7 @@
 
         (async function loadSeries() {
             try {
-                const resp = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
+                const resp = await fetch(`${API_BASE}/api/user/series`, { credentials: 'include' });
                 if (!resp.ok) throw new Error('Failed to load series');
                 const series = await resp.json();
                 series.forEach(s => {
