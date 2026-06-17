@@ -15,6 +15,8 @@
     const params = new URLSearchParams(window.location.search);
     const editId = params.get('id') ? parseInt(params.get('id'), 10) : null;
 
+    const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
+
     let coverFile = null;
     let selectedCategories = new Set();
     let episodeCount = 0;
@@ -92,6 +94,7 @@
                             episodesList.appendChild(row);
                         });
                         publishBtn.textContent = 'Сохранить';
+                        deleteSeriesBtn.style.display = 'inline-block';
                     }
                 }
             }
@@ -183,6 +186,31 @@
         const row = createEpisodeRow('');
         episodesList.appendChild(row);
         row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    deleteSeriesBtn.addEventListener('click', async function() {
+        if (!confirm('Удалить сериал и все его эпизоды? Это действие нельзя отменить.')) return;
+        if (!confirm('Вы уверены?')) return;
+        try {
+            deleteSeriesBtn.disabled = true;
+            deleteSeriesBtn.textContent = 'Удаляем...';
+            const resp = await fetch(`${API_BASE}/api/series/${editId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({}));
+                alert(err.error || 'Ошибка при удалении сериала');
+                deleteSeriesBtn.disabled = false;
+                deleteSeriesBtn.textContent = 'Удалить сериал';
+                return;
+            }
+            window.location.href = 'user.html';
+        } catch (_) {
+            alert('Ошибка сети при удалении сериала');
+            deleteSeriesBtn.disabled = false;
+            deleteSeriesBtn.textContent = 'Удалить сериал';
+        }
     });
 
     publishBtn.addEventListener('click', async function() {
