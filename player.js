@@ -50,7 +50,13 @@
                     playerTitle.textContent = `${s.title} — Серия ${ep.episode_num || ''}: ${ep.title || ''}`;
                     const videoUrl = ep.tiktok_url;
                     if (videoUrl) {
-                        const src = videoUrl.startsWith('http') ? videoUrl : `${API_BASE}${videoUrl}`;
+                        // Если страница открыта по HTTPS, проксируем видео через gateway
+                        // чтобы избежать mixed content (tiktok_url хранит http://...)
+                        let src = videoUrl.startsWith('http') ? videoUrl : `${API_BASE}${videoUrl}`;
+                        if (window.location.protocol === 'https:' && src.startsWith('http://')) {
+                            const u = new URL(src);
+                            src = u.pathname + u.search;
+                        }
                         if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                             var hls = new Hls();
                             hls.loadSource(src);
