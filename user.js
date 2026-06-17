@@ -64,7 +64,7 @@
 
         (async function loadSeries() {
             try {
-                const resp = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
+                const resp = await fetch(`${API_BASE}/api/user/series`, { credentials: 'include' });
                 if (!resp.ok) throw new Error('Failed to load series');
                 const series = await resp.json();
                 series.forEach(s => {
@@ -171,35 +171,37 @@
                 return;
             }
             try {
-                const resp = await fetch(`${API_BASE}/api/auth/me`, {
+                const res = await fetch(`${API_BASE}/api/auth/me/username`, {
                     method: 'PUT',
-                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: newName })
+                    credentials: 'include',
+                    body: JSON.stringify({ username: newName }),
                 });
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    alert(err.error || 'Ошибка при смене имени');
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.error || 'Ошибка обновления имени');
                     return;
                 }
-                const user = await resp.json();
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: user.username || newName }));
+                const data = await res.json();
+                // Обновляем localStorage
+                const cached = JSON.parse(localStorage.getItem('prAIm_user') || '{}');
+                cached.username = data.username;
+                localStorage.setItem('prAIm_user', JSON.stringify(cached));
+                // Обновляем отображение
                 const nameEl = document.getElementById('profileUserName');
-                if (nameEl) nameEl.textContent = user.username || newName;
+                if (nameEl) nameEl.textContent = data.username;
                 const avatarEl = document.getElementById('profileAvatar');
-                if (avatarEl) avatarEl.textContent = (user.username || newName).charAt(0).toUpperCase();
-                const displayEl = document.getElementById('userNameDisplay');
-                if (displayEl) displayEl.textContent = user.username || newName;
+                if (avatarEl) avatarEl.textContent = data.username.charAt(0).toUpperCase();
+                alert('Имя пользователя изменено.');
                 nameInput.value = '';
-                alert('Имя пользователя успешно изменено.');
             } catch (_) {
-                alert('Ошибка сети при смене имени');
+                alert('Ошибка сервера. Проверьте подключение.');
             }
         });
     }
 
     if (passwordForm) {
-        passwordForm.addEventListener('submit', (event) => {
+        passwordForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const currentPassword = document.getElementById('currentPassword').value.trim();
             const newPassword = document.getElementById('newPassword').value.trim();
@@ -213,8 +215,26 @@
                 alert('Пароли не совпадают.');
                 return;
             }
-            alert('Пароль успешно изменён.');
-            passwordForm.reset();
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/me/password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                    }),
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.error || 'Ошибка смены пароля');
+                    return;
+                }
+                alert('Пароль успешно изменён.');
+                passwordForm.reset();
+            } catch (_) {
+                alert('Ошибка сервера. Проверьте подключение.');
+            }
         });
     }
 
