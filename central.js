@@ -88,7 +88,7 @@ async function loadRecommendedSeries() {
 
             const rating = document.createElement('div');
             rating.className = 'rating';
-            rating.textContent = `★ ${s.average_rating ?? '—'}`;
+            rating.innerHTML = `Рейтинг: <span>${s.average_rating ?? '-'}</span>`;
 
             info.appendChild(title);
             info.appendChild(desc);
@@ -174,9 +174,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount });
+            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount });
+            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     }
 
@@ -185,9 +185,9 @@ function setupLegacyCategories() {
         if (!trackElement) return;
         const scrollAmount = 280;
         if (direction === 'left') {
-            trackElement.scrollBy({ left: -scrollAmount });
+            trackElement.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         } else if (direction === 'right') {
-            trackElement.scrollBy({ left: scrollAmount });
+            trackElement.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     }
 
@@ -270,12 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const catRight = document.getElementById('catScrollRight');
         if (track && catLeft) {
             catLeft.addEventListener('click', () => {
-                track.scrollBy({ left: -300 });
+                track.scrollBy({ left: -300, behavior: 'smooth' });
             });
         }
         if (track && catRight) {
             catRight.addEventListener('click', () => {
-                track.scrollBy({ left: 300 });
+                track.scrollBy({ left: 300, behavior: 'smooth' });
             });
         }
     } else {
