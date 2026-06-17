@@ -64,7 +64,7 @@
 
         (async function loadSeries() {
             try {
-                const resp = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
+                const resp = await fetch(`${API_BASE}/api/user/series`, { credentials: 'include' });
                 if (!resp.ok) throw new Error('Failed to load series');
                 const series = await resp.json();
                 series.forEach(s => {
