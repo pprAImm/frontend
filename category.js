@@ -3,46 +3,43 @@
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
-    const moviesGrid = document.getElementById('moviesGrid');
+    const seriesGrid = document.getElementById('seriesGrid');
 
-    function renderMovie(movie) {
-        const card = document.createElement('article');
-        card.className = 'movie-card';
+    function renderCard(s, averageRating) {
+        const card = document.createElement('div');
+        card.className = 'series-card';
+        card.onclick = () => window.location.href = `series.html?id=${s.id}`;
 
         const img = document.createElement('img');
-        img.className = 'movie-cover';
-        img.src = movie.cover_url || 'https://placehold.co/420x236/23253a/white?text=🎬&font=montserrat';
-        img.alt = movie.title || 'Сериал';
-        img.addEventListener('click', () => {
-            window.location.href = `series.html?id=${movie.id}`;
-        });
+        img.src = s.cover_url || 'https://placehold.co/150x200';
+        img.onerror = function() {
+            this.src = 'https://placehold.co/150x200';
+        };
 
-        const body = document.createElement('div');
-        body.className = 'movie-card-body';
+        const info = document.createElement('div');
+        info.className = 'series-card-info';
 
-        const title = document.createElement('h3');
-        title.className = 'movie-title';
-        title.textContent = movie.title || '';
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = s.title;
 
-        const desc = document.createElement('p');
-        desc.className = 'movie-desc';
-        desc.textContent = movie.description || '';
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = s.description || '';
 
         const rating = document.createElement('div');
-        rating.className = 'movie-rating';
-        rating.innerHTML = `Рейтинг: <span>${movie.average_rating ?? '-'}</span>`;
+        rating.className = 'rating';
+        rating.innerHTML = `Рейтинг: <span>${averageRating ?? '-'}</span>`;
 
-        body.appendChild(title);
-        body.appendChild(desc);
-        body.appendChild(rating);
+        info.appendChild(title);
+        info.appendChild(desc);
+        info.appendChild(rating);
         card.appendChild(img);
-        card.appendChild(body);
-
+        card.appendChild(info);
         return card;
     }
 
     if (slug) {
-        // Load category and its series from API
         fetch(`${API_BASE}/api/categories/${encodeURIComponent(slug)}`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : Promise.reject(r))
             .then(data => {
@@ -56,23 +53,17 @@
 
                 const series = data.series || [];
                 if (series.length === 0) {
-                    moviesGrid.innerHTML = '<div class="empty-state">В этой категории ещё нет сериалов.</div>';
+                    seriesGrid.innerHTML = '<div class="no-results">В этой категории ещё нет сериалов.</div>';
                     return;
                 }
 
-                series.forEach(s => moviesGrid.appendChild(renderMovie({
-                    id: s.id,
-                    title: s.title,
-                    description: s.description,
-                    cover_url: s.cover_url,
-                    average_rating: s.average_rating,
-                })));
+                series.forEach(s => seriesGrid.appendChild(renderCard(s, s.average_rating)));
             })
             .catch(err => {
                 console.debug('Failed to load category from API, falling back to static content', err);
-                moviesGrid.innerHTML = '<div class="empty-state">Не удалось загрузить данные категории.</div>';
+                seriesGrid.innerHTML = '<div class="no-results">Не удалось загрузить данные категории.</div>';
             });
     } else {
-        moviesGrid.innerHTML = '<div class="empty-state">Категория не указана.</div>';
+        seriesGrid.innerHTML = '<div class="no-results">Категория не указана.</div>';
     }
 })();
