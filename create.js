@@ -18,7 +18,7 @@
     const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
     let coverFile = null;
-    let selectedCategories = new Set();
+    let selectedCategory = null;
     let episodeCount = 0;
     let deletedEpisodeIds = [];
 
@@ -48,12 +48,9 @@
                 chip.textContent = cat.name;
                 chip.dataset.slug = cat.slug;
                 chip.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                    if (this.classList.contains('selected')) {
-                        selectedCategories.add(cat.slug);
-                    } else {
-                        selectedCategories.delete(cat.slug);
-                    }
+                    categoriesContainer.querySelectorAll('.category-chip').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedCategory = cat.slug;
                 });
                 categoriesContainer.appendChild(chip);
             });
@@ -229,8 +226,8 @@
             return;
         }
 
-        if (selectedCategories.size === 0) {
-            alert('Выберите хотя бы одну категорию');
+        if (!selectedCategory) {
+            alert('Выберите категорию');
             return;
         }
 

@@ -290,3 +290,44 @@ body {
         font-size: 1.2rem;
     }
 }
+
+@media (orientation: portrait) {
+    .player-container {
+        padding: 0 8px;
+    }
+    .player-topbar {
+        padding: 10px 0;
+    }
+    .player-close {
+        width: 34px;
+        height: 34px;
+        font-size: 1.1rem;
+    }
+    .player-title {
+        font-size: 0.95rem;
+    }
+    .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    .play-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+    }
+    .controls-main {
+        gap: 8px;
+    }
+    .player-controls {
+        gap: 14px;
+    }
+    .speed-label {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+    .player-time {
+        font-size: 0.7rem;
+        min-width: 30px;
+    }
+}
