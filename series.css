@@ -432,9 +432,13 @@
     .series-description {
         text-align: center;
     }
+    .rate-stars {
+        gap: 3px;
+        overflow: hidden;
+    }
     .rate-stars .star {
-        font-size: 2.2rem;
-        padding: 4px;
+        font-size: 1.6rem;
+        padding: 3px;
     }
     .series-right {
         width: 100%;
