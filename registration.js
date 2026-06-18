@@ -1,5 +1,5 @@
 (function() {
-    const API_BASE = `http://${window.location.hostname}:8081`;
+    const API_BASE = '';
 
     const registrationForm = document.getElementById('registration-form');
     const loginForm = document.getElementById('login-form');
@@ -27,9 +27,24 @@
                 }
 
                 const userData = await res.json();
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username }));
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username, email: userData.email || '' }));
 
-                navigateWithAnimation('central.html');
+                // Показываем сообщение о подтверждении email вместо перехода на главную
+                const container = document.querySelector('.registration-container');
+                if (container) {
+                    container.innerHTML = `
+                        <h1>Регистрация завершена</h1>
+                        <p style="margin: 20px 0; line-height: 1.6; color: rgba(255,255,255,0.8);">
+                            Мы отправили письмо для подтверждения на адрес <strong>${email}</strong>.
+                        </p>
+                        <p style="margin: 20px 0; line-height: 1.6; color: rgba(255,255,255,0.8);">
+                            Пожалуйста, проверьте вашу почту и нажмите на ссылку в письме, чтобы подтвердить email.
+                        </p>
+                        <p style="margin-top: 24px;">
+                            <a href="login.html" style="color: #8b5cf6;">Перейти к входу</a>
+                        </p>
+                    `;
+                }
             } catch (e) {
                 console.error(e);
                 alert('Ошибка сети при регистрации');
@@ -59,7 +74,7 @@
                 }
 
                 const userData = await res.json();
-                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username }));
+                localStorage.setItem('prAIm_user', JSON.stringify({ username: userData.username, email: userData.email || '' }));
 
                 navigateWithAnimation('central.html');
             } catch (e) {
