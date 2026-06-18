@@ -19,32 +19,48 @@
     margin-bottom: 20px;
 }
 
+.series-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
 .series-title {
     font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: -0.3px;
-    margin-bottom: 12px;
     background: linear-gradient(120deg, #ff5fa3, #ff2e93, #8b3df0);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     line-height: 1.2;
+    margin-bottom: 0;
 }
 
-.series-categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.series-category-chip {
-    padding: 4px 14px;
+.series-category-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
     border-radius: 999px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
     background: rgba(139, 92, 246, 0.12);
     color: #d0c0ff;
-    font-weight: 500;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.series-category-badge:hover {
+    background: rgba(139, 92, 246, 0.22);
+    border-color: rgba(139, 92, 246, 0.5);
+    transform: translateY(-1px);
 }
 
 .series-description {
@@ -372,6 +388,9 @@
 @media (orientation: portrait) {
     .series-cover {
         width: 180px;
+    }
+    .series-title-row {
+        justify-content: center;
     }
     .series-title {
         font-size: 1.3rem;

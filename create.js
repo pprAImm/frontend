@@ -18,7 +18,7 @@
     const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
     let coverFile = null;
-    let selectedCategories = new Set();
+    let selectedCategory = null;
     let episodeCount = 0;
     let deletedEpisodeIds = [];
 
@@ -48,12 +48,9 @@
                 chip.textContent = cat.name;
                 chip.dataset.slug = cat.slug;
                 chip.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                    if (this.classList.contains('selected')) {
-                        selectedCategories.add(cat.slug);
-                    } else {
-                        selectedCategories.delete(cat.slug);
-                    }
+                    categoriesContainer.querySelectorAll('.category-chip').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedCategory = cat.slug;
                 });
                 categoriesContainer.appendChild(chip);
             });
@@ -72,15 +69,13 @@
                             imagePlaceholder.style.display = 'none';
                             coverFile = null;
                         }
-                        if (s.category_id && categories.length) {
-                            const cat = categories.find(c => c.id === s.category_id);
-                            if (cat) {
-                                categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
-                                    if (chip.dataset.slug === cat.slug) {
-                                        chip.classList.add('selected');
-                                        selectedCategories.add(cat.slug);
-                                    }
-                                });
+                        if (s.categories && s.categories.length) {
+                            const cat = s.categories[0];
+                            const slug = cat.slug || cat;
+                            const chip = categoriesContainer.querySelector(`.category-chip[data-slug="${slug}"]`);
+                            if (chip) {
+                                chip.classList.add('selected');
+                                selectedCategory = slug;
                             }
                         }
                         const eps = data.episodes || [];
@@ -229,8 +224,8 @@
             return;
         }
 
-        if (selectedCategories.size === 0) {
-            alert('Выберите хотя бы одну категорию');
+        if (!selectedCategory) {
+            alert('Выберите категорию');
             return;
         }
 
@@ -290,7 +285,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slug', selectedCategory);
                 if (coverFile) {
                     metaForm.append('cover', coverFile);
                 }
@@ -316,7 +311,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slug', selectedCategory);
                 metaForm.append('cover', coverFile);
 
                 const metaResp = await fetch(`${API_BASE}/api/series`, {
