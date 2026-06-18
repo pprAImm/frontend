@@ -69,15 +69,17 @@
                             imagePlaceholder.style.display = 'none';
                             coverFile = null;
                         }
-                        if (s.category_id && categories.length) {
-                            const cat = categories.find(c => c.id === s.category_id);
-                            if (cat) {
-                                categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
-                                    if (chip.dataset.slug === cat.slug) {
-                                        chip.classList.add('selected');
-                                        selectedCategories.add(cat.slug);
-                                    }
-                                });
+                        if (s.categories && s.categories.length) {
+                            const seriesCat = s.categories[0];
+                            const catName = seriesCat.name || seriesCat;
+                            const matched = categories.find(c => c.name === catName || c.slug === catName);
+                            const slug = matched ? matched.slug : (seriesCat.slug || null);
+                            if (slug) {
+                                const chip = categoriesContainer.querySelector(`.category-chip[data-slug="${slug}"]`);
+                                if (chip) {
+                                    chip.classList.add('selected');
+                                    selectedCategory = slug;
+                                }
                             }
                         }
                         const eps = data.episodes || [];
@@ -287,7 +289,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slug', selectedCategory);
                 if (coverFile) {
                     metaForm.append('cover', coverFile);
                 }
@@ -313,7 +315,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slug', selectedCategory);
                 metaForm.append('cover', coverFile);
 
                 const metaResp = await fetch(`${API_BASE}/api/series`, {
