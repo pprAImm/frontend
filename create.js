@@ -75,7 +75,7 @@
                                 categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
                                     if (chip.dataset.slug === cat.slug) {
                                         chip.classList.add('selected');
-                                        selectedCategories.add(cat.slug);
+                                        selectedCategory = cat.slug;
                                     }
                                 });
                             }
@@ -287,7 +287,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slugs', JSON.stringify([selectedCategory]));
                 if (coverFile) {
                     metaForm.append('cover', coverFile);
                 }
@@ -313,7 +313,7 @@
                 const metaForm = new FormData();
                 metaForm.append('title', title);
                 metaForm.append('description', description);
-                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('category_slugs', JSON.stringify([selectedCategory]));
                 metaForm.append('cover', coverFile);
 
                 const metaResp = await fetch(`${API_BASE}/api/series`, {
