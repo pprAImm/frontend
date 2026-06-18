@@ -53,68 +53,79 @@ async function loadCategories() {
     });
 }
 
-// Load recommended/authenticated series
-async function loadRecommendedSeries() {
+function renderSeriesCard(s, averageRating) {
+    const card = document.createElement('div');
+    card.className = 'series-card';
+    card.onclick = () => window.location.href = `series.html?id=${s.id}`;
+
+    const img = document.createElement('img');
+    img.src = s.cover_url || 'https://placehold.co/150x200';
+    img.onerror = function() {
+        this.src = 'https://placehold.co/150x200';
+    };
+
+    const info = document.createElement('div');
+    info.className = 'series-card-info';
+
+    const title = document.createElement('div');
+    title.className = 'title';
+    title.textContent = s.title;
+
+    const desc = document.createElement('div');
+    desc.className = 'desc';
+    desc.textContent = s.description || '';
+
+    const rating = document.createElement('div');
+    rating.className = 'rating';
+    rating.innerHTML = `Рейтинг: <span>${averageRating ?? '-'}</span>`;
+
+    info.appendChild(title);
+    info.appendChild(desc);
+    info.appendChild(rating);
+    card.appendChild(img);
+    card.appendChild(info);
+    return card;
+}
+
+// Load popular series (Bayesian weighted top 16)
+async function loadPopularSeries() {
     try {
-        const response = await fetch(`${API_BASE}/api/series/search?q=`, { credentials: 'include' });
-        if (!response.ok) throw new Error('Failed to load series');
+        const response = await fetch(`${API_BASE}/api/series/popular`, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to load popular');
         const series = await response.json();
 
         const container = document.getElementById('seriesContainer');
         if (!container) return;
-
         container.innerHTML = '';
-        const top8 = series.slice(0, 8);
-
-        const ratings = await Promise.all(top8.map(s =>
-            fetch(`${API_BASE}/api/series/${s.id}`, { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .catch(() => null)
-        ));
-
-        top8.forEach((s, i) => {
-            const card = document.createElement('div');
-            card.className = 'series-card';
-            card.onclick = () => window.location.href = `series.html?id=${s.id}`;
-
-            const img = document.createElement('img');
-            img.src = s.cover_url || 'https://placehold.co/150x200';
-            img.onerror = function() {
-                this.src = 'https://placehold.co/150x200';
-            };
-            
-            const info = document.createElement('div');
-            info.className = 'series-card-info';
-
-            const title = document.createElement('div');
-            title.className = 'title';
-            title.textContent = s.title;
-
-            const desc = document.createElement('div');
-            desc.className = 'desc';
-            desc.textContent = s.description || '';
-
-            const ratingVal = ratings[i]?.series?.average_rating ?? null;
-
-            const rating = document.createElement('div');
-            rating.className = 'rating';
-            rating.innerHTML = `Рейтинг: <span>${ratingVal ?? '-'}</span>`;
-
-            info.appendChild(title);
-            info.appendChild(desc);
-            info.appendChild(rating);
-            card.appendChild(img);
-            card.appendChild(info);
-            container.appendChild(card);
+        series.forEach(s => {
+            container.appendChild(renderSeriesCard(s, s.average_rating));
         });
     } catch (err) {
-        console.error('Error loading series:', err);
+        console.error('Error loading popular series:', err);
+    }
+}
+
+// Load newest series (by id DESC)
+async function loadNewSeries() {
+    try {
+        const response = await fetch(`${API_BASE}/api/series/new`, { credentials: 'include' });
+        if (!response.ok) throw new Error('Failed to load new series');
+        const series = await response.json();
+
+        const container = document.getElementById('newSeriesContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        series.forEach(s => {
+            container.appendChild(renderSeriesCard(s, s.average_rating));
+        });
+    } catch (err) {
+        console.error('Error loading new series:', err);
     }
 }
 
 // Load categories and series
 async function checkAuthentication() {
-    await Promise.all([loadCategories(), loadRecommendedSeries()]);
+    await Promise.all([loadCategories(), loadPopularSeries(), loadNewSeries()]);
 }
 
 // Logout function
