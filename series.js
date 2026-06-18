@@ -72,9 +72,16 @@
                 const name = cat.name || cat;
                 categoryBadge.textContent = name;
                 categoryBadge.style.display = 'inline-flex';
+                categoryBadge.style.cursor = 'pointer';
+                categoryBadge.style.opacity = '1';
                 categoryBadge.addEventListener('click', function() {
                     window.location.href = `category.html?slug=${encodeURIComponent(slug)}`;
                 });
+            } else {
+                categoryBadge.textContent = 'no category';
+                categoryBadge.style.display = 'inline-flex';
+                categoryBadge.style.cursor = 'default';
+                categoryBadge.style.opacity = '0.4';
             }
 
             if (s.average_rating != null) {

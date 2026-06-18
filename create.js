@@ -70,12 +70,16 @@
                             coverFile = null;
                         }
                         if (s.categories && s.categories.length) {
-                            const cat = s.categories[0];
-                            const slug = cat.slug || cat;
-                            const chip = categoriesContainer.querySelector(`.category-chip[data-slug="${slug}"]`);
-                            if (chip) {
-                                chip.classList.add('selected');
-                                selectedCategory = slug;
+                            const seriesCat = s.categories[0];
+                            const catName = seriesCat.name || seriesCat;
+                            const matched = categories.find(c => c.name === catName || c.slug === catName);
+                            const slug = matched ? matched.slug : (seriesCat.slug || null);
+                            if (slug) {
+                                const chip = categoriesContainer.querySelector(`.category-chip[data-slug="${slug}"]`);
+                                if (chip) {
+                                    chip.classList.add('selected');
+                                    selectedCategory = slug;
+                                }
                             }
                         }
                         const eps = data.episodes || [];
