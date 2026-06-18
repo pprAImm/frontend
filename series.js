@@ -6,7 +6,7 @@
     const commentsList = document.getElementById('commentsList');
     const titleEl = document.getElementById('seriesTitle');
     const coverImg = document.getElementById('seriesCover');
-    const categoriesEl = document.getElementById('seriesCategories');
+    const categoryBadge = document.getElementById('seriesCategoryBadge');
     const descEl = document.getElementById('seriesDescription');
     const ratingValue = document.getElementById('ratingValue');
     const rateStars = document.getElementById('rateStars');
@@ -67,11 +67,13 @@
             ratingValue.textContent = (s.average_rating != null) ? `${s.average_rating} / 10` : '—';
 
             if (s.categories && s.categories.length) {
-                s.categories.forEach(cat => {
-                    const chip = document.createElement('span');
-                    chip.className = 'series-category-chip';
-                    chip.textContent = cat.name || cat.slug || cat;
-                    categoriesEl.appendChild(chip);
+                const cat = s.categories[0];
+                const slug = cat.slug || cat;
+                const name = cat.name || cat;
+                categoryBadge.textContent = name;
+                categoryBadge.style.display = 'inline-flex';
+                categoryBadge.addEventListener('click', function() {
+                    window.location.href = `category.html?slug=${encodeURIComponent(slug)}`;
                 });
             }
 
