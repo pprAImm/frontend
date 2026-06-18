@@ -231,6 +231,36 @@
     opacity: 0.9;
 }
 
+.episode-badge {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.episode-badge.completed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.episode-badge.progress {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.episode-watched {
+    opacity: 0.65;
+}
+
+.episode-watched .episode-title {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
 .comment-item {
     display: flex;
     gap: 12px;
