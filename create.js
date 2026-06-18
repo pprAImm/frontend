@@ -13,11 +13,16 @@
     const publishBtn = document.getElementById('publishBtn');
 
     const params = new URLSearchParams(window.location.search);
-    const editId = params.get('id') ? parseInt(params.get('id'), 10) : null;
+    const editId = params.get('editId') ? parseInt(params.get('editId'), 10) : params.get('id') ? parseInt(params.get('id'), 10) : null;
+
+    const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
+
+    const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
     let coverFile = null;
     let selectedCategories = new Set();
     let episodeCount = 0;
+    let deletedEpisodeIds = [];
 
     imageArea.addEventListener('click', () => imageInput.click());
 
@@ -67,28 +72,33 @@
                             imagePreview.src = s.cover_url;
                             imagePreview.style.display = 'block';
                             imagePlaceholder.style.display = 'none';
+                            coverFile = null;
                         }
-                        if (s.categories && categories.length) {
-                            const slugs = s.categories.map(c => c.slug || c);
-                            categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
-                                if (slugs.includes(chip.dataset.slug)) {
-                                    chip.classList.add('selected');
-                                    selectedCategories.add(chip.dataset.slug);
-                                }
-                            });
+                        if (s.category_id && categories.length) {
+                            const cat = categories.find(c => c.id === s.category_id);
+                            if (cat) {
+                                categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
+                                    if (chip.dataset.slug === cat.slug) {
+                                        chip.classList.add('selected');
+                                        selectedCategories.add(cat.slug);
+                                    }
+                                });
+                            }
                         }
                         const eps = data.episodes || [];
                         eps.forEach(ep => {
                             episodeCount++;
-                            const row = createEpisodeRow();
-                            row.querySelector('.episode-title-input').value = ep.title || '';
+                            const row = createEpisodeRow(ep.title || '');
                             row.dataset.episodeId = ep.id;
                             const btn = row.querySelector('.episode-video-btn');
-                            btn.textContent = ep.tiktok_url ? '✓ видео загружено' : 'добавьте видео';
-                            if (ep.tiktok_url) btn.classList.add('has-video');
+                            btn.textContent = '✓ видео загружено';
+                            btn.classList.add('has-video');
+                            // Кнопка удаления для существующего эпизода
+                            addDeleteButton(row, ep.id);
                             episodesList.appendChild(row);
                         });
                         publishBtn.textContent = 'Сохранить';
+                        deleteSeriesBtn.style.display = 'inline-block';
                     }
                 }
             }
@@ -97,7 +107,35 @@
         }
     })();
 
-    function createEpisodeRow() {
+    function addDeleteButton(row, episodeId) {
+        const delBtn = document.createElement('button');
+        delBtn.className = 'episode-remove-btn';
+        delBtn.textContent = '×';
+        delBtn.style.color = '#ff4444';
+        delBtn.title = 'Удалить эпизод';
+        delBtn.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            if (!confirm('Удалить этот эпизод?')) return;
+            try {
+                const resp = await fetch(`${API_BASE}/api/episodes/${episodeId}`, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при удалении эпизода');
+                    return;
+                }
+                deletedEpisodeIds.push(episodeId);
+                row.remove();
+            } catch (_) {
+                alert('Ошибка сети при удалении эпизода');
+            }
+        });
+        row.querySelector('.episode-remove-btn').replaceWith(delBtn);
+    }
+
+    function createEpisodeRow(title) {
         episodeCount++;
         const row = document.createElement('div');
         row.className = 'episode-row';
@@ -130,6 +168,7 @@
         const titleInputEp = document.createElement('input');
         titleInputEp.className = 'episode-title-input';
         titleInputEp.type = 'text';
+        titleInputEp.value = title;
         titleInputEp.placeholder = 'Название серии';
 
         const removeBtn = document.createElement('button');
@@ -148,16 +187,41 @@
     }
 
     addEpisodeBtn.addEventListener('click', function() {
-        const row = createEpisodeRow();
+        const row = createEpisodeRow('');
         episodesList.appendChild(row);
         row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    deleteSeriesBtn.addEventListener('click', async function() {
+        if (!confirm('Удалить сериал и все его эпизоды? Это действие нельзя отменить.')) return;
+        if (!confirm('Вы уверены?')) return;
+        try {
+            deleteSeriesBtn.disabled = true;
+            deleteSeriesBtn.textContent = 'Удаляем...';
+            const resp = await fetch(`${API_BASE}/api/series/${editId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({}));
+                alert(err.error || 'Ошибка при удалении сериала');
+                deleteSeriesBtn.disabled = false;
+                deleteSeriesBtn.textContent = 'Удалить сериал';
+                return;
+            }
+            window.location.href = 'user.html';
+        } catch (_) {
+            alert('Ошибка сети при удалении сериала');
+            deleteSeriesBtn.disabled = false;
+            deleteSeriesBtn.textContent = 'Удалить сериал';
+        }
     });
 
     publishBtn.addEventListener('click', async function() {
         const title = titleInput.value.trim();
         const description = descInput.value.trim();
 
-        if (!coverFile) {
+        if (!editId && !coverFile) {
             alert('Загрузите обложку сериала');
             return;
         }
@@ -178,15 +242,15 @@
             return;
         }
 
-        const episodes = [];
+        const existingEpisodes = [];
+        const newEpisodeRows = [];
         for (const row of rows) {
             const titleInput = row.querySelector('.episode-title-input');
             const videoInput = row.querySelector('input[type="file"]');
             const epTitle = titleInput.value.trim();
 
             if (row.dataset.episodeId) {
-                // Existing episode — skip upload
-                episodes.push({ title: epTitle, file: null, existing: true });
+                existingEpisodes.push({ title: epTitle, id: parseInt(row.dataset.episodeId) });
                 continue;
             }
 
@@ -200,42 +264,82 @@
                 return;
             }
 
+            newEpisodeRows.push(row);
+        }
+
+        const nextEpNum = existingEpisodes.length + 1;
+        const episodes = [];
+        for (let i = 0; i < newEpisodeRows.length; i++) {
+            const row = newEpisodeRows[i];
+            const titleInput = row.querySelector('.episode-title-input');
+            const videoInput = row.querySelector('input[type="file"]');
             episodes.push({
-                title: epTitle,
+                title: titleInput.value.trim(),
                 file: videoInput.files[0],
                 existing: false,
+                episodeNum: nextEpNum + i,
             });
         }
 
         publishBtn.disabled = true;
-        publishBtn.textContent = 'Создаём сериал...';
 
         try {
-            // Step 1: Create series with metadata + cover
-            const metaForm = new FormData();
-            metaForm.append('title', title);
-            metaForm.append('description', description);
-            metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
-            metaForm.append('cover', coverFile);
+            let seriesId;
 
-            const metaResp = await fetch(`${API_BASE}/api/series`, {
-                method: 'POST',
-                credentials: 'include',
-                body: metaForm,
-            });
+            if (editId) {
+                // Режим редактирования — PUT
+                publishBtn.textContent = 'Сохраняем сериал...';
+                const metaForm = new FormData();
+                metaForm.append('title', title);
+                metaForm.append('description', description);
+                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                if (coverFile) {
+                    metaForm.append('cover', coverFile);
+                }
 
-            if (!metaResp.ok) {
-                const err = await metaResp.json().catch(() => ({}));
-                alert(err.error || 'Ошибка при создании сериала');
-                publishBtn.disabled = false;
-                publishBtn.textContent = editId ? 'Сохранить' : 'Выложить';
-                return;
+                const metaResp = await fetch(`${API_BASE}/api/series/${editId}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: metaForm,
+                });
+
+                if (!metaResp.ok) {
+                    const err = await metaResp.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при сохранении сериала');
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = 'Сохранить';
+                    return;
+                }
+
+                seriesId = editId;
+            } else {
+                // Создание нового сериала — POST
+                publishBtn.textContent = 'Создаём сериал...';
+                const metaForm = new FormData();
+                metaForm.append('title', title);
+                metaForm.append('description', description);
+                metaForm.append('category_slugs', JSON.stringify(Array.from(selectedCategories)));
+                metaForm.append('cover', coverFile);
+
+                const metaResp = await fetch(`${API_BASE}/api/series`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: metaForm,
+                });
+
+                if (!metaResp.ok) {
+                    const err = await metaResp.json().catch(() => ({}));
+                    alert(err.error || 'Ошибка при создании сериала');
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = 'Выложить';
+                    return;
+                }
+
+                const metaData = await metaResp.json();
+                seriesId = metaData.id;
             }
 
-            const metaData = await metaResp.json();
-            const seriesId = metaData.id;
-
-            // Step 2: Upload each episode video to streaming-service
+            // Загружаем видео для НОВЫХ эпизодов
             const newEpisodes = episodes.filter(ep => !ep.existing);
             for (let i = 0; i < newEpisodes.length; i++) {
                 const ep = newEpisodes[i];
@@ -245,7 +349,7 @@
                 videoForm.append('file', ep.file);
                 videoForm.append('series_id', String(seriesId));
                 videoForm.append('title', ep.title);
-                videoForm.append('episode_num', String(i + 1));
+                videoForm.append('episode_num', String(ep.episodeNum));
 
                 const videoResp = await fetch(`/upload`, {
                     method: 'POST',
