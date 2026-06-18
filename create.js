@@ -13,7 +13,9 @@
     const publishBtn = document.getElementById('publishBtn');
 
     const params = new URLSearchParams(window.location.search);
-    const editId = params.get('id') ? parseInt(params.get('id'), 10) : null;
+    const editId = params.get('editId') ? parseInt(params.get('editId'), 10) : params.get('id') ? parseInt(params.get('id'), 10) : null;
+
+    const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
     const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
@@ -72,14 +74,16 @@
                             imagePlaceholder.style.display = 'none';
                             coverFile = null;
                         }
-                        if (s.categories && categories.length) {
-                            const slugs = s.categories.map(c => c.slug || c);
-                            categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
-                                if (slugs.includes(chip.dataset.slug)) {
-                                    chip.classList.add('selected');
-                                    selectedCategories.add(chip.dataset.slug);
-                                }
-                            });
+                        if (s.category_id && categories.length) {
+                            const cat = categories.find(c => c.id === s.category_id);
+                            if (cat) {
+                                categoriesContainer.querySelectorAll('.category-chip').forEach(chip => {
+                                    if (chip.dataset.slug === cat.slug) {
+                                        chip.classList.add('selected');
+                                        selectedCategories.add(cat.slug);
+                                    }
+                                });
+                            }
                         }
                         const eps = data.episodes || [];
                         eps.forEach(ep => {
