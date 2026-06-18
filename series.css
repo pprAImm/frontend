@@ -368,3 +368,43 @@
         max-height: 400px;
     }
 }
+
+@media (orientation: portrait) {
+    .series-cover {
+        width: 180px;
+    }
+    .series-title {
+        font-size: 1.3rem;
+        text-align: center;
+    }
+    .series-categories {
+        justify-content: center;
+    }
+    .series-description {
+        text-align: center;
+    }
+    .rate-stars .star {
+        font-size: 2.2rem;
+        padding: 4px;
+    }
+    .series-right {
+        width: 100%;
+    }
+    .episodes-panel {
+        width: 100%;
+    }
+    .comment-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .comment-textarea {
+        width: 100%;
+        min-height: 56px;
+        font-size: 1rem;
+    }
+    .add-comment-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+    }
+}

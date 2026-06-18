@@ -17,8 +17,6 @@
 
     const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
 
-    const deleteSeriesBtn = document.getElementById('deleteSeriesBtn');
-
     let coverFile = null;
     let selectedCategories = new Set();
     let episodeCount = 0;
