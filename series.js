@@ -21,15 +21,42 @@
         return;
     }
 
+    let watchProgress = {};
+
     function renderEpisode(ep) {
         const card = document.createElement('div');
         card.className = 'episode-card';
         card.dataset.episode = ep.id;
-        card.innerHTML = `<span class="episode-title">${ep.title ?? ''}</span>`;
+
+        const progress = watchProgress[ep.id];
+        const isCompleted = progress && progress.completed;
+        const hasProgress = progress && progress.progress_seconds > 0 && !progress.completed;
+
+        let badgeText = '';
+        if (isCompleted) badgeText = '✓ Просмотрено';
+        else if (hasProgress) badgeText = `▶ ${Math.floor(progress.progress_seconds / 60)}:${Math.floor(progress.progress_seconds % 60).toString().padStart(2, '0')}`;
+
+        const badgeHtml = badgeText ? `<span class="episode-badge ${isCompleted ? 'completed' : 'progress'}">${badgeText}</span>` : '';
+        card.innerHTML = `<span class="episode-title">${ep.title ?? ''}</span>${badgeHtml}`;
+
+        if (isCompleted) card.classList.add('episode-watched');
+
         card.addEventListener('click', function() {
             window.location.href = `player.html?seriesId=${id}&episodeId=${ep.id}`;
         });
         return card;
+    }
+
+    function loadWatchProgress() {
+        return fetch(`${API_BASE}/api/series/${id}/progress`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : [])
+            .then(list => {
+                watchProgress = {};
+                (list || []).forEach(wp => {
+                    watchProgress[wp.episode_id] = wp;
+                });
+            })
+            .catch(function() {});
     }
 
     function renderComment(c) {
@@ -84,6 +111,12 @@
             const eps = data.episodes || [];
             episodesList.innerHTML = '';
             eps.forEach(ep => episodesList.appendChild(renderEpisode(ep)));
+
+            // Load watch progress and re-render episodes with badges
+            loadWatchProgress().then(() => {
+                episodesList.innerHTML = '';
+                eps.forEach(ep => episodesList.appendChild(renderEpisode(ep)));
+            }).catch(function() {});
         })
         .catch(err => {
             console.error('Failed to load series:', err);

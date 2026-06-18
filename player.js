@@ -22,6 +22,7 @@
 
     let episodes = [];
     let currentIndex = -1;
+    let progressSaveInterval = null;
 
     playerClose.addEventListener('click', function() {
         window.location.href = `series.html?id=${seriesId}`;
@@ -32,6 +33,51 @@
         const m = Math.floor(seconds / 60);
         const s = Math.floor(seconds % 60);
         return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function saveProgress() {
+        if (!video.duration || !episodeId) return;
+        fetch(`${API_BASE}/api/episodes/${episodeId}/progress`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                progress_seconds: Math.floor(video.currentTime),
+                duration_seconds: Math.floor(video.duration),
+                completed: video.ended || Math.abs(video.currentTime - video.duration) < 1
+            })
+        }).catch(function() {});
+    }
+
+    function restoreProgress(epId) {
+        fetch(`${API_BASE}/api/episodes/${epId}/progress`, { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data && data.progress_seconds > 0 && !data.completed) {
+                    const seekTo = data.progress_seconds;
+                    if (video.readyState >= 1) {
+                        video.currentTime = seekTo;
+                    } else {
+                        video.addEventListener('loadedmetadata', function onMeta() {
+                            video.currentTime = seekTo;
+                            video.removeEventListener('loadedmetadata', onMeta);
+                        }, { once: true });
+                    }
+                }
+            })
+            .catch(function() {});
+    }
+
+    function startProgressTracking() {
+        stopProgressTracking();
+        progressSaveInterval = setInterval(saveProgress, 10000);
+    }
+
+    function stopProgressTracking() {
+        if (progressSaveInterval) {
+            clearInterval(progressSaveInterval);
+            progressSaveInterval = null;
+        }
     }
 
     function loadEpisode(epId) {
@@ -50,8 +96,6 @@
                     playerTitle.textContent = `${s.title} — Серия ${ep.episode_num || ''}: ${ep.title || ''}`;
                     const videoUrl = ep.tiktok_url;
                     if (videoUrl) {
-                        // Если страница открыта по HTTPS, проксируем видео через gateway
-                        // чтобы избежать mixed content (tiktok_url хранит http://...)
                         let src = videoUrl.startsWith('http') ? videoUrl : `${API_BASE}${videoUrl}`;
                         if (window.location.protocol === 'https:' && src.startsWith('http://')) {
                             const u = new URL(src);
@@ -80,6 +124,8 @@
                     }
                 }
                 updateNavButtons();
+                startProgressTracking();
+                restoreProgress(epId);
             })
             .catch(function() {
                 playerTitle.textContent = 'Ошибка загрузки';
@@ -130,9 +176,18 @@
 
     video.addEventListener('ended', function() {
         playBtn.textContent = '▶';
+        saveProgress();
         if (currentIndex < episodes.length - 1) {
             goToEpisode(currentIndex + 1);
         }
+    });
+
+    window.addEventListener('beforeunload', function() {
+        saveProgress();
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) saveProgress();
     });
 
     video.addEventListener('click', function() {
