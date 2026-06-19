@@ -81,10 +81,19 @@
         });
     }
 
-    // Load series data
-    fetch(`${API_BASE}/api/series/${id}`, { credentials: 'include' })
-        .then(r => r.ok ? r.json() : Promise.reject(r))
-        .then(data => {
+    function showNoCategory() {
+        categoryBadge.textContent = 'no category';
+        categoryBadge.style.display = 'inline-flex';
+        categoryBadge.style.cursor = 'default';
+        categoryBadge.style.opacity = '0.4';
+    }
+
+    // Load categories, then series data
+    Promise.all([
+        fetch(`${API_BASE}/api/categories`, { credentials: 'include' }).then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(`${API_BASE}/api/series/${id}`, { credentials: 'include' }).then(r => r.ok ? r.json() : Promise.reject(r)),
+    ])
+        .then(([categories, data]) => {
             const s = data.series;
             if (!s) throw new Error('Series not found');
 
@@ -93,22 +102,19 @@
             if (s.cover_url) coverImg.src = s.cover_url;
             ratingValue.textContent = (s.average_rating != null) ? `${s.average_rating} / 10` : '—';
 
-            if (s.categories && s.categories.length) {
-                const cat = s.categories[0];
-                const slug = cat.slug || cat;
-                const name = cat.name || cat;
-                categoryBadge.textContent = name;
+            const cat = (s.category_id && categories.length)
+                ? categories.find(c => c.id === s.category_id)
+                : null;
+            if (cat) {
+                categoryBadge.textContent = cat.name || cat.slug;
                 categoryBadge.style.display = 'inline-flex';
                 categoryBadge.style.cursor = 'pointer';
                 categoryBadge.style.opacity = '1';
                 categoryBadge.addEventListener('click', function() {
-                    window.location.href = `category.html?slug=${encodeURIComponent(slug)}`;
+                    window.location.href = `category.html?slug=${encodeURIComponent(cat.slug)}`;
                 });
             } else {
-                categoryBadge.textContent = 'no category';
-                categoryBadge.style.display = 'inline-flex';
-                categoryBadge.style.cursor = 'default';
-                categoryBadge.style.opacity = '0.4';
+                showNoCategory();
             }
 
             if (s.average_rating != null) {

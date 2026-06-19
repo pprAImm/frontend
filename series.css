@@ -433,12 +433,12 @@
         text-align: center;
     }
     .rate-stars {
-        gap: 3px;
+        gap: 2px;
         overflow: hidden;
     }
     .rate-stars .star {
-        font-size: 1.6rem;
-        padding: 3px;
+        font-size: 1.2rem;
+        padding: 2px;
     }
     .series-right {
         width: 100%;
